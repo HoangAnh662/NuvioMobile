@@ -10,8 +10,10 @@ jobs:
     steps:
       - name: Checkout source
         uses: actions/checkout@v6
-        with:
-          submodules: recursive
+
+      - name: Init MPVKit submodule
+        run: |
+          git submodule update --init MPVKit || true
 
       - name: Set up Java
         uses: actions/setup-java@v5
