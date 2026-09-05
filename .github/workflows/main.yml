@@ -26,7 +26,8 @@ jobs:
 
       - name: Create local.properties
         run: |
-          echo "sdk.dir=$ANDROID_HOME" > local.properties
+          echo "${{ secrets.NUVIO_LOCAL_PROPERTIES_BASE64 }}" | base64 --decode > local.properties
+          echo "sdk.dir=$ANDROID_HOME" >> local.properties
 
       - name: Build Full Debug APK
         run: ./gradlew :androidApp:assembleFullDebug --stacktrace
