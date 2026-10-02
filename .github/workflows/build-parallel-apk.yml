@@ -24,9 +24,17 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
 
       - name: Prepare local properties
+        shell: bash
+        env:
+          NUVIO_SUPABASE_ANON_KEY: ${{ secrets.NUVIO_SUPABASE_ANON_KEY }}
         run: |
-          touch local.properties
-          echo "sdk.dir=$ANDROID_HOME" >> local.properties
+          set -e
+          test -n "$NUVIO_SUPABASE_ANON_KEY"
+          {
+            echo "sdk.dir=$ANDROID_HOME"
+            echo "NUVIO_SUPABASE_URL=https://api.nuvio.tv"
+            echo "NUVIO_SUPABASE_ANON_KEY=$NUVIO_SUPABASE_ANON_KEY"
+          } > local.properties
 
       - name: Make Gradle executable
         run: chmod +x gradlew
@@ -41,11 +49,11 @@ jobs:
           mkdir -p artifact
           APK=$(find androidApp/build/outputs/apk -type f -name '*debug*.apk' | head -n 1)
           test -n "$APK"
-          cp "$APK" artifact/Nuvio-0.5.5-Beta-Parallel-arm64.apk
+          cp "$APK" artifact/Nuvio-0.5.5-Beta-Parallel.apk
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Nuvio-0.5.5-Beta-Parallel-arm64
-          path: artifact/Nuvio-0.5.5-Beta-Parallel-arm64.apk
+          name: Nuvio-0.5.5-Beta-Parallel
+          path: artifact/Nuvio-0.5.5-Beta-Parallel.apk
           if-no-files-found: error
