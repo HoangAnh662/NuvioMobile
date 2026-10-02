@@ -66,7 +66,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.nuvio.app"
+        applicationId = "com.nuvio.app.beta055"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = releaseAppVersionCode
@@ -76,12 +76,8 @@ android {
 
     flavorDimensions += "distribution"
     productFlavors {
-        create("full") {
-            dimension = "distribution"
-        }
-        create("playstore") {
-            dimension = "distribution"
-        }
+        create("full") { dimension = "distribution" }
+        create("playstore") { dimension = "distribution" }
     }
 
     sourceSets.getByName("full") {
@@ -90,24 +86,14 @@ android {
     }
 
     packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
+        resources { excludes += "/META-INF/{AL2.0,LGPL2.1}" }
         jniLibs {
             useLegacyPackaging = true
-            pickFirsts += listOf(
-                "lib/*/libc++_shared.so",
-                "lib/*/libavcodec.so",
-                "lib/*/libavutil.so",
-                "lib/*/libswscale.so",
-                "lib/*/libswresample.so"
-            )
+            pickFirsts += listOf("lib/*/libc++_shared.so", "lib/*/libavcodec.so", "lib/*/libavutil.so", "lib/*/libswscale.so", "lib/*/libswresample.so")
         }
     }
 
-    androidResources {
-        noCompress += "cvr"
-    }
+    androidResources { noCompress += "cvr" }
 
     splits {
         abi {
@@ -120,19 +106,12 @@ android {
 
     buildTypes {
         getByName("release") {
-            val minifyRelease = providers.gradleProperty("releaseMinifyEnabled")
-                .map(String::toBooleanStrict)
-                .getOrElse(true)
+            val minifyRelease = providers.gradleProperty("releaseMinifyEnabled").map(String::toBooleanStrict).getOrElse(true)
             isMinifyEnabled = minifyRelease
             isShrinkResources = minifyRelease
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "../composeApp/proguard-rules.pro",
-            )
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "../composeApp/proguard-rules.pro")
             signingConfig = signingConfigs.getByName("release")
-            ndk {
-                debugSymbolLevel = "FULL"
-            }
+            ndk { debugSymbolLevel = "FULL" }
         }
     }
 
@@ -145,7 +124,7 @@ android {
 
 androidComponents {
     onVariants(selector().withBuildType("debug")) { variant ->
-        variant.applicationId.set("com.nuviodebug.com")
+        variant.applicationId.set("com.nuvio.app.beta055.debug")
     }
 }
 
@@ -163,12 +142,8 @@ sentry {
     sentryOrg?.let(org::set)
     sentryProject?.let(projectName::set)
     ignoredBuildTypes.set(setOf("debug"))
-    autoInstallation {
-        enabled.set(false)
-    }
-    tracingInstrumentation {
-        enabled.set(false)
-    }
+    autoInstallation { enabled.set(false) }
+    tracingInstrumentation { enabled.set(false) }
 }
 
 dependencies {
