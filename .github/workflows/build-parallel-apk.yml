@@ -14,7 +14,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '17'
@@ -23,21 +23,23 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
 
+      - name: Prepare local properties
+        run: |
+          touch local.properties
+          echo "sdk.dir=$ANDROID_HOME" >> local.properties
+
       - name: Make Gradle executable
         run: chmod +x gradlew
 
-      - name: Build ARM64 debug APK
+      - name: Build parallel debug APK
         run: ./gradlew :androidApp:assembleFullDebug
 
-      - name: Collect ARM64 APK
+      - name: Collect APK
         shell: bash
         run: |
           set -e
           mkdir -p artifact
-          APK=$(find androidApp/build/outputs/apk -type f -name '*arm64-v8a*debug*.apk' | head -n 1)
-          if [ -z "$APK" ]; then
-            APK=$(find androidApp/build/outputs/apk -type f -name '*debug*.apk' | head -n 1)
-          fi
+          APK=$(find androidApp/build/outputs/apk -type f -name '*debug*.apk' | head -n 1)
           test -n "$APK"
           cp "$APK" artifact/Nuvio-0.5.5-Beta-Parallel-arm64.apk
 
