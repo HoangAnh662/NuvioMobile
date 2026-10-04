@@ -69,6 +69,7 @@ jobs:
           s=s.replace('import androidx.compose.foundation.layout.padding\n','import androidx.compose.foundation.layout.padding\nimport androidx.compose.foundation.layout.size\n')
           s=s.replace('import androidx.compose.ui.Modifier\n','import androidx.compose.ui.Modifier\nimport androidx.compose.foundation.shape.CircleShape\nimport androidx.compose.ui.draw.clip\n')
           s=s.replace('thumb = {},','thumb = { Box(Modifier.size(if (isInteracting) 20.dp else 14.dp).clip(CircleShape).background(Color.White.copy(alpha = 0.86f)).border(1.5.dp, Color.White, CircleShape)) },')
+          s=s.replace('val trackOrigin = Offset(0f, 35.dp.toPx() - trackHeight / 2)','val trackOrigin = Offset(0f, size.height / 2f - trackHeight / 2f)',1)
           s=s.replace('color = Color.White.copy(alpha = 0.3f),','color = Color.White.copy(alpha = 0.16f),',1)
           s=s.replace('color = accent.copy(alpha = 0.35f),','color = Color.White.copy(alpha = 0.28f),',1)
           s=s.replace('brush = accentBrush,','color = Color.White.copy(alpha = 0.96f),',1)
