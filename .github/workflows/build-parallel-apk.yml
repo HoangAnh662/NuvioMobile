@@ -112,19 +112,9 @@ jobs:
           from pathlib import Path
           p = Path('composeApp/src/commonMain/kotlin/com/nuvio/app/features/player/PlayerEpisodesPanel.kt')
           s = p.read_text()
-          old = '''PlayerSidePanel(
-              visible = visible,
-              onDismiss = onDismiss,
-              modifier = modifier,
-          )'''
-          new = '''PlayerSidePanel(
-              visible = visible,
-              onDismiss = onDismiss,
-              width = 460.dp,
-              modifier = modifier,
-          )'''
-          if old not in s: raise SystemExit('Episode side panel pattern not found')
-          s = s.replace(old, new, 1)
+          needle = '        onDismiss = onDismiss,\n        modifier = modifier,\n'
+          if needle not in s: raise SystemExit('Episode side panel args not found')
+          s = s.replace(needle, '        onDismiss = onDismiss,\n        width = 460.dp,\n        modifier = modifier,\n', 1)
           s = s.replace('verticalArrangement = Arrangement.spacedBy(12.dp),\n                contentPadding = PaddingValues(top = 4.dp, bottom = 8.dp),', 'verticalArrangement = Arrangement.spacedBy(8.dp),\n                contentPadding = PaddingValues(top = 2.dp, bottom = 6.dp),', 1)
           s = s.replace('.padding(10.dp),\n        verticalAlignment = Alignment.Top,\n        horizontalArrangement = Arrangement.spacedBy(14.dp),', '.padding(8.dp),\n        verticalAlignment = Alignment.CenterVertically,\n        horizontalArrangement = Arrangement.spacedBy(10.dp),', 1)
           s = s.replace('.width(130.dp)\n                .height(90.dp)', '.width(112.dp)\n                .height(72.dp)', 1)
