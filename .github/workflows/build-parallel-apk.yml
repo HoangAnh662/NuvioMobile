@@ -65,6 +65,100 @@ jobs:
           p.write_text(s)
           PY
 
+      - name: Apply bright Liquid Glass player UI
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          # Center controls + legacy header controls
+          p = Path('composeApp/src/commonMain/kotlin/com/nuvio/app/features/player/PlayerControls.kt')
+          s = p.read_text()
+          s = s.replace(
+              '.clip(CircleShape)\n            .background(Color.Black.copy(alpha = 0.35f))\n            .clickable(onClick = onClick)',
+              '.clip(CircleShape)\n            .background(Color.White.copy(alpha = 0.16f))\n            .border(1.dp, Color.White.copy(alpha = 0.32f), CircleShape)\n            .clickable(onClick = onClick)'
+          )
+          s = s.replace(
+              '.clip(CircleShape)\n            .clickable(onClick = onClick)\n            .padding(metrics.sideButtonPadding)',
+              '.clip(CircleShape)\n            .background(Color.White.copy(alpha = 0.16f))\n            .border(1.dp, Color.White.copy(alpha = 0.34f), CircleShape)\n            .clickable(onClick = onClick)\n            .padding(metrics.sideButtonPadding)'
+          )
+          s = s.replace(
+              '.clip(CircleShape)\n            .clickable(onClick = onClick)\n            .padding(metrics.playButtonPadding)',
+              '.clip(CircleShape)\n            .background(Color.White.copy(alpha = 0.20f))\n            .border(1.dp, Color.White.copy(alpha = 0.42f), CircleShape)\n            .clickable(onClick = onClick)\n            .padding(metrics.playButtonPadding)'
+          )
+          s = s.replace('containerColor = Color.Black.copy(alpha = 0.35f)', 'containerColor = Color.White.copy(alpha = 0.16f)')
+          p.write_text(s)
+
+          # Toolbar, bottom actions and runtime pill
+          p = Path('composeApp/src/commonMain/kotlin/com/nuvio/app/features/player/PlayerControlActions.kt')
+          s = p.read_text()
+          s = s.replace('import androidx.compose.foundation.clickable\n', 'import androidx.compose.foundation.background\nimport androidx.compose.foundation.border\nimport androidx.compose.foundation.clickable\n')
+          s = s.replace('import androidx.compose.foundation.rememberScrollState\n', 'import androidx.compose.foundation.rememberScrollState\nimport androidx.compose.foundation.shape.CircleShape\nimport androidx.compose.foundation.shape.RoundedCornerShape\n')
+          s = s.replace('import androidx.compose.ui.graphics.Color\n', 'import androidx.compose.ui.draw.clip\nimport androidx.compose.ui.graphics.Color\n')
+          s = s.replace('containerColor = Color.Transparent,', 'containerColor = Color.White.copy(alpha = 0.16f),')
+          old = 'IconButton(onClick = onClick, modifier = Modifier.size(48.dp)) {'
+          new = '''IconButton(
+        onClick = onClick,
+        modifier = Modifier
+            .size(48.dp)
+            .clip(CircleShape)
+            .background(Color.White.copy(alpha = 0.14f))
+            .border(1.dp, Color.White.copy(alpha = 0.30f), CircleShape),
+    ) {'''
+          if old not in s:
+              raise SystemExit('PlayerAction pattern not found')
+          s = s.replace(old, new, 1)
+          old = 'modifier = Modifier.height(48.dp).widthIn(min = 48.dp).clickable('
+          new = '''modifier = Modifier
+                    .height(48.dp)
+                    .widthIn(min = 48.dp)
+                    .clip(RoundedCornerShape(24.dp))
+                    .background(Color.White.copy(alpha = 0.14f))
+                    .border(1.dp, Color.White.copy(alpha = 0.28f), RoundedCornerShape(24.dp))
+                    .padding(horizontal = 14.dp)
+                    .clickable('''
+          if old not in s:
+              raise SystemExit('Runtime pill pattern not found')
+          s = s.replace(old, new, 1)
+          p.write_text(s)
+
+          # Glass timeline: translucent track, bright progress and glass thumb
+          p = Path('composeApp/src/commonMain/kotlin/com/nuvio/app/features/player/PlayerTimeline.kt')
+          s = p.read_text()
+          s = s.replace('import androidx.compose.foundation.layout.Box\n', 'import androidx.compose.foundation.background\nimport androidx.compose.foundation.border\nimport androidx.compose.foundation.layout.Box\n')
+          s = s.replace('import androidx.compose.foundation.layout.padding\n', 'import androidx.compose.foundation.layout.padding\nimport androidx.compose.foundation.layout.size\n')
+          s = s.replace('import androidx.compose.ui.Modifier\n', 'import androidx.compose.ui.Modifier\nimport androidx.compose.foundation.shape.CircleShape\nimport androidx.compose.ui.draw.clip\n')
+          s = s.replace(
+              'thumb = {},',
+              '''thumb = {
+                Box(
+                    Modifier
+                        .size(if (isInteracting) 24.dp else 18.dp)
+                        .clip(CircleShape)
+                        .background(Color.White.copy(alpha = 0.72f))
+                        .border(2.dp, Color.White.copy(alpha = 0.92f), CircleShape),
+                )
+            },'''
+          )
+          s = s.replace('color = Color.White.copy(alpha = 0.3f),', 'color = Color.White.copy(alpha = 0.18f),', 1)
+          s = s.replace('color = accent.copy(alpha = 0.35f),', 'color = Color.White.copy(alpha = 0.28f),', 1)
+          old = '''drawRoundRect(
+                                brush = accentBrush,
+                                topLeft = trackOrigin,
+                                size = Size(size.width * (state.value / rangeEnd).coerceIn(0f, 1f), trackHeight),
+                                cornerRadius = radius,
+                            )'''
+          new = '''drawRoundRect(
+                                color = Color.White.copy(alpha = 0.92f),
+                                topLeft = trackOrigin,
+                                size = Size(size.width * (state.value / rangeEnd).coerceIn(0f, 1f), trackHeight),
+                                cornerRadius = radius,
+                            )'''
+          if old not in s:
+              raise SystemExit('Timeline active track pattern not found')
+          s = s.replace(old, new, 1)
+          p.write_text(s)
+          PY
+
       - name: Build Full Release
         run: ./gradlew :androidApp:assembleFullRelease -PreleaseMinifyEnabled=true
 
