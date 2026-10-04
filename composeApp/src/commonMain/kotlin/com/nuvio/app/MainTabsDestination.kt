@@ -6,8 +6,8 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
@@ -68,6 +68,7 @@ internal fun MainTabsDestination(
 
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
         val isTabletLayout = useTabletFloatingTabBar || maxWidth >= 768.dp
+        val isLandscapeLayout = maxWidth > maxHeight
         val tabActions = remember(actions, isTabletLayout) { actions(isTabletLayout) }
         val useNativeBottomTabs = if (useNativeNavigation) {
             useNativeTabBar
@@ -109,7 +110,7 @@ internal fun MainTabsDestination(
                         onProfileSelected = onProfileSelected,
                         onAddProfileRequested = onAddProfileRequested,
                         hazeState = navBarHazeState,
-                        popupBelowAnchor = isTabletLayout,
+                        popupBelowAnchor = isTabletLayout && !isLandscapeLayout,
                     )
                 },
             ),
@@ -178,13 +179,19 @@ internal fun MainTabsDestination(
                 if (isTabletLayout && !useNativeBottomTabs) {
                     val tabletNavBarScrollState = remember { NuvioNavBarScrollState().apply { collapse() } }
                     FloatingNavigationBar(
-                        modifier = Modifier.align(Alignment.TopCenter).widthIn(max = 416.dp),
+                        modifier = Modifier
+                            .align(if (isLandscapeLayout) Alignment.BottomCenter else Alignment.TopCenter)
+                            .widthIn(max = 416.dp),
                         scrollState = tabletNavBarScrollState,
                         hazeState = navBarHazeState,
-                        contentPadding = PaddingValues(
-                            top = WindowInsets.statusBars.asPaddingValues().calculateTopPadding() + 10.dp,
-                            bottom = 8.dp,
-                        ),
+                        contentPadding = if (isLandscapeLayout) {
+                            PaddingValues(
+                                top = 8.dp,
+                                bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding() + 16.dp,
+                            )
+                        } else {
+                            PaddingValues(top = 10.dp, bottom = 8.dp)
+                        },
                         compactSize = true,
                         items = floatingNavigationItems,
                         glowEnabled = navBarGlowEnabled,
