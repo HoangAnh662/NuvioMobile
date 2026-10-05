@@ -57,7 +57,7 @@ internal fun StreamCard(
     modifier: Modifier = Modifier,
     isCurrent: Boolean = false,
     currentLabel: String? = null,
-    liquidGlass: Boolean = false,
+    liquidGlass: Boolean = true,
 ) {
     val cardShape = RoundedCornerShape(if (liquidGlass) 18.dp else 12.dp)
     val badgeImages = stream.badges.filter { it.imageURL.isNotBlank() }
