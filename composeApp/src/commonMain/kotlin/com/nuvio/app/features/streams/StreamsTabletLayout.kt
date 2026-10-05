@@ -167,7 +167,7 @@ internal fun TabletStreamsLayout(
                     .weight(0.6f)
                     .fillMaxHeight()
                     .padding(
-                        top = if (isIos) platformPhysicalTopInset() + 60.dp else 60.dp,
+                        top = if (isIos) platformPhysicalTopInset() + 20.dp else 18.dp,
                         end = 12.dp,
                         bottom = 12.dp,
                     ),
@@ -175,13 +175,39 @@ internal fun TabletStreamsLayout(
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .clip(RoundedCornerShape(24.dp))
-                        .hazeEffect(state = hazeState) {
-                            inputScale = HazeInputScale.Fixed(0.66f)
-                            blurRadius = 56.dp
+                        .graphicsLayer {
+                            shadowElevation = 18.dp.toPx()
+                            shape = RoundedCornerShape(30.dp)
+                            clip = false
                         }
-                        .background(Color.Black.copy(alpha = 0.36f)),
+                        .clip(RoundedCornerShape(30.dp))
+                        .hazeEffect(state = hazeState) {
+                            inputScale = HazeInputScale.Fixed(0.72f)
+                            blurRadius = 72.dp
+                        }
+                        .background(
+                            Brush.verticalGradient(
+                                colors = listOf(
+                                    Color.White.copy(alpha = 0.20f),
+                                    Color.White.copy(alpha = 0.10f),
+                                    Color.Black.copy(alpha = 0.30f),
+                                ),
+                            ),
+                        ),
                 ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(
+                                Brush.horizontalGradient(
+                                    colors = listOf(
+                                        Color.White.copy(alpha = 0.06f),
+                                        Color.Transparent,
+                                        Color.White.copy(alpha = 0.08f),
+                                    ),
+                                ),
+                            ),
+                    )
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
