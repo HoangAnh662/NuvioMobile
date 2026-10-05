@@ -11,7 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowLeft
@@ -196,7 +196,7 @@ internal fun PlayerControlActions(
                 }
             }
             Box(
-                modifier = Modifier.height(48.dp).widthIn(min = 48.dp).clickable(
+                modifier = Modifier.height(48.dp).width(104.dp).clickable(
                     role = Role.Button,
                     onClickLabel = stringResource(
                         if (showRemainingTime) Res.string.compose_player_show_elapsed_time else Res.string.compose_player_show_remaining_time,
