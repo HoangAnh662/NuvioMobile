@@ -80,126 +80,46 @@ internal fun TabletStreamsLayout(
         if (tabletBackdrop != null) backdropVisible = true
     }
 
-    val backdropAlpha by animateFloatAsState(
-        targetValue = if (backdropVisible) 1f else 0f,
-        animationSpec = tween(durationMillis = 520),
-        label = "tablet_backdrop_alpha",
-    )
-    val backdropScale by animateFloatAsState(
-        targetValue = if (backdropVisible) 1f else 1.05f,
-        animationSpec = tween(durationMillis = 620),
-        label = "tablet_backdrop_scale",
-    )
+    val backdropAlpha by animateFloatAsState(targetValue = if (backdropVisible) 1f else 0f, animationSpec = tween(durationMillis = 520), label = "tablet_backdrop_alpha")
+    val backdropScale by animateFloatAsState(targetValue = if (backdropVisible) 1f else 1.05f, animationSpec = tween(durationMillis = 620), label = "tablet_backdrop_scale")
 
     Box(modifier = modifier.fillMaxSize()) {
         Box(modifier = Modifier.fillMaxSize().hazeSource(state = hazeState)) {
             if (tabletBackdrop != null) {
-                AsyncImage(
-                    model = tabletBackdrop,
-                    contentDescription = null,
-                    modifier = Modifier.fillMaxSize().graphicsLayer {
-                        alpha = backdropAlpha
-                        scaleX = backdropScale
-                        scaleY = backdropScale
-                    },
-                    contentScale = ContentScale.Crop,
-                )
-            } else {
-                Box(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background))
-            }
-            Box(
-                Modifier.fillMaxSize().background(
-                    Brush.verticalGradient(
-                        listOf(
-                            Color.Black.copy(alpha = 0.12f),
-                            Color.Black.copy(alpha = 0.28f),
-                            Color.Black.copy(alpha = 0.48f),
-                        ),
-                    ),
-                ),
-            )
+                AsyncImage(model = tabletBackdrop, contentDescription = null, modifier = Modifier.fillMaxSize().graphicsLayer { alpha = backdropAlpha; scaleX = backdropScale; scaleY = backdropScale }, contentScale = ContentScale.Crop)
+            } else Box(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background))
+            Box(Modifier.fillMaxSize().background(Brush.verticalGradient(listOf(Color.Black.copy(alpha = 0.10f), Color.Black.copy(alpha = 0.22f), Color.Black.copy(alpha = 0.40f)))))
         }
 
         Row(modifier = Modifier.fillMaxSize()) {
-            Box(
-                modifier = Modifier.weight(0.43f).fillMaxHeight().padding(24.dp),
-                contentAlignment = Alignment.Center,
-            ) {
-                if (isEpisode && seasonNumber != null && episodeNumber != null) {
-                    TabletEpisodeInfoPanel(logo, seasonNumber, episodeNumber, episodeTitle, title)
-                } else {
-                    TabletMovieInfoPanel(title, logo)
-                }
+            Box(modifier = Modifier.weight(0.43f).fillMaxHeight().padding(24.dp), contentAlignment = Alignment.Center) {
+                if (isEpisode && seasonNumber != null && episodeNumber != null) TabletEpisodeInfoPanel(logo, seasonNumber, episodeNumber, episodeTitle, title) else TabletMovieInfoPanel(title, logo)
             }
 
-            Box(
-                modifier = Modifier.weight(0.57f).fillMaxHeight(),
-                contentAlignment = Alignment.CenterEnd,
-            ) {
+            Box(modifier = Modifier.weight(0.57f).fillMaxHeight(), contentAlignment = Alignment.CenterEnd) {
                 val panelShape = RoundedCornerShape(30.dp)
                 Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(top = 14.dp, end = 14.dp, bottom = 14.dp, start = 4.dp)
-                        .graphicsLayer {
-                            shadowElevation = 18.dp.toPx()
-                            shape = panelShape
-                            clip = false
-                        }
+                    modifier = Modifier.fillMaxSize()
+                        .padding(top = 18.dp, end = 14.dp, bottom = 14.dp, start = 4.dp)
+                        .graphicsLayer { shadowElevation = 22.dp.toPx(); shape = panelShape; clip = false }
                         .clip(panelShape)
-                        .hazeEffect(state = hazeState) {
-                            inputScale = HazeInputScale.Fixed(0.82f)
-                            blurRadius = 36.dp
-                        }
-                        .background(
-                            Brush.verticalGradient(
-                                colors = listOf(
-                                    Color.White.copy(alpha = 0.13f),
-                                    Color.Black.copy(alpha = 0.08f),
-                                    Color.Black.copy(alpha = 0.18f),
-                                ),
-                            ),
-                        )
-                        .border(1.25.dp, Color.White.copy(alpha = 0.38f), panelShape),
+                        .hazeEffect(state = hazeState) { inputScale = HazeInputScale.Fixed(0.88f); blurRadius = 27.dp }
+                        .background(Brush.verticalGradient(listOf(Color.White.copy(alpha = 0.085f), Color.White.copy(alpha = 0.025f), Color.Black.copy(alpha = 0.095f))))
+                        .border(0.7.dp, Color.White.copy(alpha = 0.18f), panelShape),
                 ) {
-                    Box(
-                        Modifier.fillMaxSize().background(
-                            Brush.horizontalGradient(
-                                listOf(
-                                    Color.White.copy(alpha = 0.055f),
-                                    Color.Transparent,
-                                    Color.White.copy(alpha = 0.035f),
-                                ),
-                            ),
-                        ),
-                    )
-                    Column(
-                        modifier = Modifier.fillMaxSize().padding(start = 28.dp, end = 28.dp, top = 24.dp, bottom = 20.dp),
-                    ) {
+                    // Uneven reflections make the edge read as real glass instead of a uniform outline.
+                    Box(Modifier.fillMaxSize().background(Brush.linearGradient(listOf(Color.White.copy(alpha = 0.12f), Color.Transparent, Color.Transparent, Color.White.copy(alpha = 0.035f)), start = Offset.Zero, end = Offset(900f, 650f))))
+                    Box(Modifier.fillMaxWidth().height(1.2.dp).background(Brush.horizontalGradient(listOf(Color.Transparent, Color.White.copy(alpha = 0.48f), Color.White.copy(alpha = 0.12f), Color.Transparent))))
+                    Box(Modifier.fillMaxHeight().width(1.dp).align(Alignment.CenterEnd).background(Brush.verticalGradient(listOf(Color.Transparent, Color.White.copy(alpha = 0.30f), Color.Transparent))))
+                    Box(Modifier.fillMaxWidth().height(1.dp).align(Alignment.BottomCenter).background(Brush.horizontalGradient(listOf(Color.Transparent, Color.White.copy(alpha = 0.14f), Color.Transparent))))
+
+                    Column(modifier = Modifier.fillMaxSize().padding(start = 28.dp, end = 28.dp, top = 24.dp, bottom = 20.dp)) {
                         if ((resumePositionMs != null && resumePositionMs > 0L) || (resumeProgressFraction != null && resumeProgressFraction > 0f)) {
-                            ResumeBanner(
-                                positionMs = resumePositionMs,
-                                progressFraction = resumeProgressFraction,
-                                modifier = Modifier.padding(bottom = 8.dp),
-                            )
+                            ResumeBanner(positionMs = resumePositionMs, progressFraction = resumeProgressFraction, modifier = Modifier.padding(bottom = 8.dp))
                         }
-                        ProviderFilterRow(
-                            groups = uiState.groups,
-                            selectedFilter = uiState.selectedFilter,
-                            onFilterSelected = { addonId -> StreamsRepository.selectFilter(addonId) },
-                            onRefresh = onRefresh,
-                        )
+                        ProviderFilterRow(groups = uiState.groups, selectedFilter = uiState.selectedFilter, onFilterSelected = { addonId -> StreamsRepository.selectFilter(addonId) }, onRefresh = onRefresh)
                         ActiveScrapersStatusBlock(uiState.groups, Modifier.padding(bottom = 4.dp))
-                        StreamList(
-                            uiState = uiState,
-                            debridEnabled = debridEnabled,
-                            appendInstantServiceToDefaultName = appendInstantServiceToDefaultName,
-                            onStreamSelected = onStreamSelected,
-                            onStreamLongPress = onStreamLongPress,
-                            resumePositionMs = resumePositionMs,
-                            resumeProgressFraction = resumeProgressFraction,
-                            modifier = Modifier.weight(1f),
-                        )
+                        StreamList(uiState = uiState, debridEnabled = debridEnabled, appendInstantServiceToDefaultName = appendInstantServiceToDefaultName, onStreamSelected = onStreamSelected, onStreamLongPress = onStreamLongPress, resumePositionMs = resumePositionMs, resumeProgressFraction = resumeProgressFraction, modifier = Modifier.weight(1f))
                     }
                 }
             }
@@ -209,34 +129,20 @@ internal fun TabletStreamsLayout(
 
 @Composable
 private fun TabletMovieInfoPanel(title: String, logo: String?, modifier: Modifier = Modifier) {
-    var logoLoadError by remember(logo) { mutableStateOf(false) }
-    val logoUrl = logo?.takeIf { it.isNotBlank() }
-    Column(
-        modifier = modifier.fillMaxWidth(0.8f),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-    ) {
-        if (logoUrl != null && !logoLoadError) {
-            AsyncImage(model = logoUrl, contentDescription = title, modifier = Modifier.fillMaxWidth().height(120.dp), contentScale = ContentScale.Fit, onError = { logoLoadError = true })
-        } else if (title.isNotBlank()) {
-            Text(text = title, style = MaterialTheme.typography.displayLarge.copy(fontSize = 32.sp, fontWeight = FontWeight.Black, letterSpacing = (-0.5).sp, shadow = Shadow(Color.Black.copy(alpha = 0.8f), Offset(0f, 2f), 4f)), color = MaterialTheme.colorScheme.onBackground, textAlign = TextAlign.Center, maxLines = 3, overflow = TextOverflow.Ellipsis)
-        } else {
-            Text(text = stringResource(Res.string.streams_no_metadata), style = MaterialTheme.typography.bodyLarge.copy(fontSize = 16.sp, fontStyle = FontStyle.Italic), color = MaterialTheme.colorScheme.onSurfaceVariant, textAlign = TextAlign.Center)
-        }
+    var logoLoadError by remember(logo) { mutableStateOf(false) }; val logoUrl = logo?.takeIf { it.isNotBlank() }
+    Column(modifier = modifier.fillMaxWidth(0.8f), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
+        if (logoUrl != null && !logoLoadError) AsyncImage(model = logoUrl, contentDescription = title, modifier = Modifier.fillMaxWidth().height(120.dp), contentScale = ContentScale.Fit, onError = { logoLoadError = true })
+        else if (title.isNotBlank()) Text(text = title, style = MaterialTheme.typography.displayLarge.copy(fontSize = 32.sp, fontWeight = FontWeight.Black, letterSpacing = (-0.5).sp, shadow = Shadow(Color.Black.copy(alpha = 0.8f), Offset(0f, 2f), 4f)), color = MaterialTheme.colorScheme.onBackground, textAlign = TextAlign.Center, maxLines = 3, overflow = TextOverflow.Ellipsis)
+        else Text(text = stringResource(Res.string.streams_no_metadata), style = MaterialTheme.typography.bodyLarge.copy(fontSize = 16.sp, fontStyle = FontStyle.Italic), color = MaterialTheme.colorScheme.onSurfaceVariant, textAlign = TextAlign.Center)
     }
 }
 
 @Composable
 private fun TabletEpisodeInfoPanel(logo: String?, seasonNumber: Int, episodeNumber: Int, episodeTitle: String?, showTitle: String, modifier: Modifier = Modifier) {
-    var logoLoadError by remember(logo) { mutableStateOf(false) }
-    val logoUrl = logo?.takeIf { it.isNotBlank() }
-    val textShadow = Shadow(Color.Black, Offset.Zero, 4f)
+    var logoLoadError by remember(logo) { mutableStateOf(false) }; val logoUrl = logo?.takeIf { it.isNotBlank() }; val textShadow = Shadow(Color.Black, Offset.Zero, 4f)
     Column(modifier = modifier.fillMaxWidth(0.8f), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
-        if (logoUrl != null && !logoLoadError) {
-            AsyncImage(model = logoUrl, contentDescription = showTitle, modifier = Modifier.fillMaxWidth().height(120.dp), contentScale = ContentScale.Fit, onError = { logoLoadError = true })
-        } else {
-            Text(text = showTitle, style = MaterialTheme.typography.displayMedium.copy(fontSize = 28.sp, fontWeight = FontWeight.Black, letterSpacing = (-0.5).sp, shadow = textShadow), color = MaterialTheme.colorScheme.onBackground, textAlign = TextAlign.Center, maxLines = 2, overflow = TextOverflow.Ellipsis)
-        }
+        if (logoUrl != null && !logoLoadError) AsyncImage(model = logoUrl, contentDescription = showTitle, modifier = Modifier.fillMaxWidth().height(120.dp), contentScale = ContentScale.Fit, onError = { logoLoadError = true })
+        else Text(text = showTitle, style = MaterialTheme.typography.displayMedium.copy(fontSize = 28.sp, fontWeight = FontWeight.Black, letterSpacing = (-0.5).sp, shadow = textShadow), color = MaterialTheme.colorScheme.onBackground, textAlign = TextAlign.Center, maxLines = 2, overflow = TextOverflow.Ellipsis)
         Spacer(Modifier.height(12.dp))
         Text(text = stringResource(Res.string.streams_episode_title_with_name, seasonNumber, episodeNumber, episodeTitle?.takeIf { it.isNotBlank() } ?: stringResource(Res.string.streams_episode_fallback_title)), style = MaterialTheme.typography.bodyLarge.copy(fontSize = 16.sp, lineHeight = 24.sp, fontWeight = FontWeight.SemiBold, shadow = textShadow), color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.95f), textAlign = TextAlign.Center, maxLines = 1, overflow = TextOverflow.Ellipsis)
     }
@@ -244,17 +150,11 @@ private fun TabletEpisodeInfoPanel(logo: String?, seasonNumber: Int, episodeNumb
 
 @Composable
 private fun ActiveScrapersStatusBlock(groups: List<AddonStreamGroup>, modifier: Modifier = Modifier) {
-    val activeScrapers = remember(groups) { groups.filter { it.isLoading }.map { it.addonName }.distinct() }
-    if (activeScrapers.isEmpty()) return
+    val activeScrapers = remember(groups) { groups.filter { it.isLoading }.map { it.addonName }.distinct() }; if (activeScrapers.isEmpty()) return
     Column(modifier = modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp)) {
-        Text(text = stringResource(Res.string.streams_active_scrapers), style = MaterialTheme.typography.labelSmall.copy(fontSize = 12.sp, fontWeight = FontWeight.Medium), color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f))
-        Spacer(Modifier.height(6.dp))
+        Text(text = stringResource(Res.string.streams_active_scrapers), style = MaterialTheme.typography.labelSmall.copy(fontSize = 12.sp, fontWeight = FontWeight.Medium), color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f)); Spacer(Modifier.height(6.dp))
         Row(modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-            activeScrapers.forEach { addonName ->
-                Box(modifier = Modifier.clip(RoundedCornerShape(6.dp)).background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.45f)).padding(horizontal = 8.dp, vertical = 3.dp)) {
-                    Text(text = addonName, modifier = Modifier.shimmer(), style = MaterialTheme.typography.labelSmall.copy(fontSize = 11.sp), color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1)
-                }
-            }
+            activeScrapers.forEach { addonName -> Box(modifier = Modifier.clip(RoundedCornerShape(6.dp)).background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.45f)).padding(horizontal = 8.dp, vertical = 3.dp)) { Text(text = addonName, modifier = Modifier.shimmer(), style = MaterialTheme.typography.labelSmall.copy(fontSize = 11.sp), color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1) } }
         }
     }
 }
