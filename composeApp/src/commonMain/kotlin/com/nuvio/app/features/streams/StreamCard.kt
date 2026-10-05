@@ -33,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
@@ -56,8 +57,9 @@ internal fun StreamCard(
     modifier: Modifier = Modifier,
     isCurrent: Boolean = false,
     currentLabel: String? = null,
+    liquidGlass: Boolean = false,
 ) {
-    val cardShape = RoundedCornerShape(12.dp)
+    val cardShape = RoundedCornerShape(if (liquidGlass) 18.dp else 12.dp)
     val badgeImages = stream.badges.filter { it.imageURL.isNotBlank() }
     val hasBadges = badgeImages.isNotEmpty() || (showFileSizeBadges && stream.behaviorHints.videoSize != null)
     Row(
@@ -65,36 +67,47 @@ internal fun StreamCard(
             .fillMaxWidth()
             .heightIn(min = 68.dp)
             .shadow(
-                elevation = 2.dp,
+                elevation = if (liquidGlass) 5.dp else 2.dp,
                 shape = cardShape,
-                ambientColor = Color.Black.copy(alpha = 0.04f),
-                spotColor = Color.Black.copy(alpha = 0.04f),
+                ambientColor = Color.Black.copy(alpha = if (liquidGlass) 0.18f else 0.04f),
+                spotColor = Color.Black.copy(alpha = if (liquidGlass) 0.18f else 0.04f),
             )
             .clip(cardShape)
             .background(
-                if (isCurrent) {
-                    MaterialTheme.colorScheme.primary.copy(alpha = 0.12f)
-                } else {
-                    Color.White.copy(alpha = 0.05f)
-                },
-            )
-            .then(
-                if (isCurrent) {
-                    Modifier.border(
-                        width = 1.dp,
-                        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.52f),
-                        shape = cardShape,
+                if (liquidGlass) {
+                    Brush.verticalGradient(
+                        listOf(
+                            Color.White.copy(alpha = if (isCurrent) 0.32f else 0.24f),
+                            Color.White.copy(alpha = if (isCurrent) 0.13f else 0.08f),
+                            Color.Black.copy(alpha = 0.24f),
+                        ),
                     )
                 } else {
-                    Modifier
+                    Brush.verticalGradient(
+                        listOf(
+                            if (isCurrent) MaterialTheme.colorScheme.primary.copy(alpha = 0.12f) else Color.White.copy(alpha = 0.05f),
+                            if (isCurrent) MaterialTheme.colorScheme.primary.copy(alpha = 0.12f) else Color.White.copy(alpha = 0.05f),
+                        ),
+                    )
                 },
+            )
+            .border(
+                width = if (liquidGlass) 1.5.dp else if (isCurrent) 1.dp else 0.dp,
+                color = if (liquidGlass) {
+                    Color.White.copy(alpha = if (isCurrent) 0.72f else 0.42f)
+                } else if (isCurrent) {
+                    MaterialTheme.colorScheme.primary.copy(alpha = 0.52f)
+                } else {
+                    Color.Transparent
+                },
+                shape = cardShape,
             )
             .combinedClickable(
                 enabled = enabled,
                 onClick = onClick,
                 onLongClick = onLongClick,
             )
-            .padding(14.dp),
+            .padding(if (liquidGlass) 12.dp else 14.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(modifier = Modifier.weight(1f)) {
@@ -142,16 +155,12 @@ internal fun StreamCard(
 
         if (showAddonLogo) {
             Spacer(modifier = Modifier.width(12.dp))
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 if (!stream.addonLogo.isNullOrBlank()) {
                     AsyncImage(
                         model = stream.addonLogo,
                         contentDescription = stream.addonName,
-                        modifier = Modifier
-                            .size(28.dp)
-                            .clip(RoundedCornerShape(6.dp)),
+                        modifier = Modifier.size(28.dp).clip(RoundedCornerShape(6.dp)),
                         contentScale = ContentScale.Fit,
                     )
                 }
@@ -171,12 +180,7 @@ internal fun StreamCard(
 @Composable
 internal fun StreamCardSkeleton(modifier: Modifier = Modifier) {
     Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .heightIn(min = 68.dp)
-            .clip(RoundedCornerShape(12.dp))
-            .background(Color.White.copy(alpha = 0.05f))
-            .padding(14.dp),
+        modifier = modifier.fillMaxWidth().heightIn(min = 68.dp).clip(RoundedCornerShape(12.dp)).background(Color.White.copy(alpha = 0.05f)).padding(14.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
     ) {
         SkeletonBlock(modifier = Modifier.fillMaxWidth(0.55f), height = 14.dp, cornerRadius = 4.dp)
@@ -196,12 +200,8 @@ private fun StreamCardBadgeRow(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(4.dp),
     ) {
-        badgeImages.forEach { badge ->
-            StreamBadgeImage(badge = badge)
-        }
-        if (showFileSizeBadges) {
-            StreamFileSizeBadge(stream = stream)
-        }
+        badgeImages.forEach { badge -> StreamBadgeImage(badge = badge) }
+        if (showFileSizeBadges) StreamFileSizeBadge(stream = stream)
     }
 }
 
@@ -211,52 +211,21 @@ private fun StreamNameWithInstantService(
     appendInstantServiceToDefaultName: Boolean,
     trailingContent: @Composable RowScope.() -> Unit = {},
 ) {
-    val nameStyle = MaterialTheme.typography.bodyMedium.copy(
-        fontSize = 14.sp,
-        fontWeight = FontWeight.Bold,
-        lineHeight = 20.sp,
-        letterSpacing = 0.sp,
-    )
-    val instantLabel = if (appendInstantServiceToDefaultName) {
-        stream.instantServiceLabel()
-    } else {
-        null
-    }
+    val nameStyle = MaterialTheme.typography.bodyMedium.copy(fontSize = 14.sp, fontWeight = FontWeight.Bold, lineHeight = 20.sp, letterSpacing = 0.sp)
+    val instantLabel = if (appendInstantServiceToDefaultName) stream.instantServiceLabel() else null
     val showInstantLabel = instantLabel != null
-    val visibleState = remember(stream.streamLabel) {
-        MutableTransitionState(showInstantLabel)
-    }
+    val visibleState = remember(stream.streamLabel) { MutableTransitionState(showInstantLabel) }
     visibleState.targetState = showInstantLabel
 
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Text(
-            text = stream.streamLabel,
-            modifier = Modifier.weight(1f, fill = false),
-            style = nameStyle,
-            color = MaterialTheme.colorScheme.onSurface,
-        )
+    Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+        Text(text = stream.streamLabel, modifier = Modifier.weight(1f, fill = false), style = nameStyle, color = MaterialTheme.colorScheme.onSurface)
         AnimatedVisibility(
             visibleState = visibleState,
-            enter = fadeIn(animationSpec = tween(durationMillis = 260)) +
-                expandHorizontally(
-                    animationSpec = tween(durationMillis = 260),
-                    expandFrom = Alignment.Start,
-                ),
-            exit = fadeOut(animationSpec = tween(durationMillis = 120)) +
-                shrinkHorizontally(
-                    animationSpec = tween(durationMillis = 120),
-                    shrinkTowards = Alignment.Start,
-                ),
+            enter = fadeIn(animationSpec = tween(durationMillis = 260)) + expandHorizontally(animationSpec = tween(durationMillis = 260), expandFrom = Alignment.Start),
+            exit = fadeOut(animationSpec = tween(durationMillis = 120)) + shrinkHorizontally(animationSpec = tween(durationMillis = 120), shrinkTowards = Alignment.Start),
             label = "streamNameInstantService",
         ) {
-            Text(
-                text = " ${instantLabel.orEmpty()}",
-                style = nameStyle,
-                color = MaterialTheme.colorScheme.onSurface,
-            )
+            Text(text = " ${instantLabel.orEmpty()}", style = nameStyle, color = MaterialTheme.colorScheme.onSurface)
         }
         trailingContent()
     }
@@ -264,28 +233,14 @@ private fun StreamNameWithInstantService(
 
 @Composable
 private fun CurrentStreamBadge(label: String) {
-    Box(
-        modifier = Modifier
-            .clip(RoundedCornerShape(999.dp))
-            .background(MaterialTheme.colorScheme.primary)
-            .padding(horizontal = 8.dp, vertical = 3.dp),
-    ) {
-        Text(
-            text = label,
-            color = MaterialTheme.colorScheme.onPrimary,
-            fontSize = 11.sp,
-            fontWeight = FontWeight.SemiBold,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
+    Box(modifier = Modifier.clip(RoundedCornerShape(999.dp)).background(MaterialTheme.colorScheme.primary).padding(horizontal = 8.dp, vertical = 3.dp)) {
+        Text(text = label, color = MaterialTheme.colorScheme.onPrimary, fontSize = 11.sp, fontWeight = FontWeight.SemiBold, maxLines = 1, overflow = TextOverflow.Ellipsis)
     }
 }
 
 private fun StreamItem.instantServiceLabel(): String? {
     val status = debridCacheStatus ?: return null
     if (status.state != StreamDebridCacheState.CACHED) return null
-    val providerLabel = DebridProviders.shortName(status.providerId)
-        .ifBlank { status.providerName.trim() }
-        .ifBlank { DebridProviders.displayName(status.providerId) }
+    val providerLabel = DebridProviders.shortName(status.providerId).ifBlank { status.providerName.trim() }.ifBlank { DebridProviders.displayName(status.providerId) }
     return "- $providerLabel Instant"
 }
