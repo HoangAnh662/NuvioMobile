@@ -37,12 +37,7 @@ internal fun PlayerStreamList(
     streamsUiState: StreamsUiState,
     onStreamSelected: (StreamItem) -> Unit,
     modifier: Modifier = Modifier,
-    contentPadding: PaddingValues = PaddingValues(
-        start = 8.dp,
-        top = 14.dp,
-        end = 8.dp,
-        bottom = 8.dp,
-    ),
+    contentPadding: PaddingValues = PaddingValues(start = 6.dp, top = 10.dp, end = 6.dp, bottom = 8.dp),
     currentStreamUrl: String? = null,
     currentStreamName: String? = null,
     currentLabel: String? = null,
@@ -60,24 +55,13 @@ internal fun PlayerStreamList(
 
     when {
         streams.isEmpty() && streamsUiState.isAnyLoading -> {
-            Column(
-                modifier = modifier.padding(contentPadding),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                repeat(4) {
-                    StreamCardSkeleton()
-                }
+            Column(modifier = modifier.padding(contentPadding), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                repeat(4) { StreamCardSkeleton() }
             }
         }
-
         streams.isEmpty() -> {
             val error = visibleGroups.firstOrNull { it.error != null }?.error
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 24.dp),
-                contentAlignment = Alignment.CenterStart,
-            ) {
+            Box(modifier = Modifier.fillMaxWidth().padding(vertical = 24.dp), contentAlignment = Alignment.CenterStart) {
                 Text(
                     text = error ?: stringResource(Res.string.compose_player_no_streams_found),
                     color = Color.White.copy(alpha = if (error == null) 0.7f else 0.85f),
@@ -85,39 +69,31 @@ internal fun PlayerStreamList(
                 )
             }
         }
-
         else -> {
             val streamKeys = remember(streams) { streams.stablePlayerKeys() }
             val formatStreamSize = rememberStreamSizeLabelFormat()
             CompositionLocalProvider(LocalStreamSizeLabelFormat provides formatStreamSize) {
-            LazyColumn(
-                modifier = modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                contentPadding = contentPadding,
-            ) {
-                itemsIndexed(
-                    items = streams,
-                    key = { index, _ -> streamKeys[index] },
-                ) { _, stream ->
-                    StreamCard(
-                        stream = stream,
-                        enabled = stream.isSelectableForPlayback(debridSettings.canResolvePlayableLinks),
-                        appendInstantServiceToDefaultName = debridSettings.canResolvePlayableLinks &&
-                            !debridSettings.hasCustomStreamFormatting,
-                        showFileSizeBadges = streamBadgeSettings.showFileSizeBadges,
-                        showAddonLogo = streamBadgeSettings.showAddonLogo,
-                        badgePlacement = streamBadgeSettings.badgePlacement,
-                        isCurrent = stream.isCurrentPlayerStream(currentStreamUrl, currentStreamName),
-                        currentLabel = currentLabel,
-                        onClick = { onStreamSelected(stream) },
-                    )
-                }
-                if (streamsUiState.isAnyLoading) {
-                    item {
-                        StreamCardSkeleton()
+                LazyColumn(
+                    modifier = modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(9.dp),
+                    contentPadding = contentPadding,
+                ) {
+                    itemsIndexed(items = streams, key = { index, _ -> streamKeys[index] }) { _, stream ->
+                        StreamCard(
+                            stream = stream,
+                            enabled = stream.isSelectableForPlayback(debridSettings.canResolvePlayableLinks),
+                            appendInstantServiceToDefaultName = debridSettings.canResolvePlayableLinks && !debridSettings.hasCustomStreamFormatting,
+                            showFileSizeBadges = streamBadgeSettings.showFileSizeBadges,
+                            showAddonLogo = streamBadgeSettings.showAddonLogo,
+                            badgePlacement = streamBadgeSettings.badgePlacement,
+                            isCurrent = stream.isCurrentPlayerStream(currentStreamUrl, currentStreamName),
+                            currentLabel = currentLabel,
+                            liquidGlass = true,
+                            onClick = { onStreamSelected(stream) },
+                        )
                     }
+                    if (streamsUiState.isAnyLoading) item { StreamCardSkeleton() }
                 }
-            }
             }
         }
     }
