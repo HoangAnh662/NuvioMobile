@@ -2,7 +2,6 @@ package com.nuvio.app.features.player
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -53,29 +52,11 @@ import nuvio.composeapp.generated.resources.*
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
-internal fun PlayerToolbar(
-    isLocked: Boolean,
-    onLockToggle: () -> Unit,
-    onBack: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
+internal fun PlayerToolbar(isLocked: Boolean, onLockToggle: () -> Unit, onBack: () -> Unit, modifier: Modifier = Modifier) {
     Row(modifier = modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
         Spacer(Modifier.weight(1f))
-        PlayerAction(
-            description = stringResource(
-                if (isLocked) Res.string.compose_player_unlock_controls else Res.string.compose_player_lock_controls,
-            ),
-            icon = if (isLocked) Icons.Rounded.LockOpen else Icons.Rounded.Lock,
-            onClick = onLockToggle,
-        )
-        NuvioBackButton(
-            onClick = onBack,
-            containerColor = Color.Transparent,
-            contentColor = Color.White,
-            buttonSize = 48.dp,
-            iconSize = 24.dp,
-            contentDescription = stringResource(Res.string.compose_player_close),
-        )
+        PlayerAction(description = stringResource(if (isLocked) Res.string.compose_player_unlock_controls else Res.string.compose_player_lock_controls), icon = if (isLocked) Icons.Rounded.LockOpen else Icons.Rounded.Lock, onClick = onLockToggle)
+        NuvioBackButton(onClick = onBack, containerColor = Color.Transparent, contentColor = Color.White, buttonSize = 48.dp, iconSize = 24.dp, contentDescription = stringResource(Res.string.compose_player_close))
     }
 }
 
@@ -100,58 +81,16 @@ internal fun PlayerControlActions(
     onInteraction: () -> Unit,
 ) {
     val actions = listOfNotNull(
-        onNextEpisodeClick?.let {
-            PlayerControlAction(
-                stringResource(Res.string.player_next_episode), it,
-                icon = Icons.Rounded.SkipNext, iconSize = 40.dp,
-            )
-        },
-        PlayerControlAction(
-            stringResource(Res.string.compose_player_subtitles), onSubtitleClick,
-            painter = appIconPainter(AppIconResource.PlayerSubtitles),
-        ),
-        PlayerControlAction(
-            stringResource(Res.string.compose_player_audio), onAudioClick,
-            painter = appIconPainter(AppIconResource.PlayerAudioFilled),
-        ),
-        onSourcesClick?.let {
-            PlayerControlAction(
-                stringResource(Res.string.compose_player_sources), it,
-                painter = appIconPainter(AppIconResource.PlayerSource),
-            )
-        },
-        onEpisodesClick?.let {
-            PlayerControlAction(
-                stringResource(Res.string.compose_player_episodes), it,
-                painter = appIconPainter(AppIconResource.PlayerEpisodes),
-            )
-        },
-        PlayerControlAction(
-            "${stringResource(Res.string.compose_player_speed)} ${formatPlaybackSpeedLabel(playbackSnapshot.playbackSpeed)}",
-            onSpeedClick, icon = Icons.Rounded.Speed,
-        ),
-        PlayerControlAction(
-            stringResource(resizeMode.labelRes), onResizeModeClick,
-            painter = appIconPainter(AppIconResource.PlayerAspectRatio),
-        ),
-        onOpenInExternalPlayer?.let {
-            PlayerControlAction(
-                stringResource(Res.string.streams_open_external_player), it,
-                icon = Icons.AutoMirrored.Rounded.OpenInNew,
-            )
-        },
-        onVideoSettingsClick?.let {
-            PlayerControlAction(
-                stringResource(Res.string.player_action_video_settings), it,
-                icon = Icons.Rounded.Build,
-            )
-        },
-        onSubmitIntroClick?.let {
-            PlayerControlAction(
-                stringResource(Res.string.submit_intro_action), it,
-                icon = Icons.Rounded.Flag,
-            )
-        },
+        onNextEpisodeClick?.let { PlayerControlAction(stringResource(Res.string.player_next_episode), it, icon = Icons.Rounded.SkipNext, iconSize = 40.dp) },
+        PlayerControlAction(stringResource(Res.string.compose_player_subtitles), onSubtitleClick, painter = appIconPainter(AppIconResource.PlayerSubtitles)),
+        PlayerControlAction(stringResource(Res.string.compose_player_audio), onAudioClick, painter = appIconPainter(AppIconResource.PlayerAudioFilled)),
+        onSourcesClick?.let { PlayerControlAction(stringResource(Res.string.compose_player_sources), it, painter = appIconPainter(AppIconResource.PlayerSource)) },
+        onEpisodesClick?.let { PlayerControlAction(stringResource(Res.string.compose_player_episodes), it, painter = appIconPainter(AppIconResource.PlayerEpisodes)) },
+        PlayerControlAction("${stringResource(Res.string.compose_player_speed)} ${formatPlaybackSpeedLabel(playbackSnapshot.playbackSpeed)}", onSpeedClick, icon = Icons.Rounded.Speed),
+        PlayerControlAction(stringResource(resizeMode.labelRes), onResizeModeClick, painter = appIconPainter(AppIconResource.PlayerAspectRatio)),
+        onOpenInExternalPlayer?.let { PlayerControlAction(stringResource(Res.string.streams_open_external_player), it, icon = Icons.AutoMirrored.Rounded.OpenInNew) },
+        onVideoSettingsClick?.let { PlayerControlAction(stringResource(Res.string.player_action_video_settings), it, icon = Icons.Rounded.Build) },
+        onSubmitIntroClick?.let { PlayerControlAction(stringResource(Res.string.submit_intro_action), it, icon = Icons.Rounded.Flag) },
     )
     val hasOverflow = actions.size > 5
     var expanded by remember(hasOverflow) { mutableStateOf(false) }
@@ -160,23 +99,27 @@ internal fun PlayerControlActions(
     LaunchedEffect(expanded, scrollState.maxValue) {
         if (expanded) scrollState.animateScrollTo(scrollState.maxValue) else scrollState.scrollTo(0)
     }
+
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = PlayerTimelineContentInset),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            verticalAlignment = Alignment.CenterVertically,
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(48.dp)
+                .padding(horizontal = PlayerTimelineContentInset),
         ) {
             Row(
-                modifier = Modifier.weight(1f).offset(x = startOffset).horizontalScroll(scrollState),
+                modifier = Modifier
+                    .align(Alignment.CenterStart)
+                    .fillMaxWidth()
+                    .padding(end = 140.dp)
+                    .offset(x = startOffset)
+                    .horizontalScroll(scrollState),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 actions.take(if (expanded) actions.size else 5).forEach { action ->
                     PlayerAction(
                         description = action.description,
-                        onClick = {
-                            onInteraction()
-                            action.onClick()
-                        },
+                        onClick = { onInteraction(); action.onClick() },
                         icon = action.icon,
                         painter = action.painter,
                         iconSize = action.iconSize,
@@ -184,28 +127,23 @@ internal fun PlayerControlActions(
                 }
                 if (hasOverflow) {
                     PlayerAction(
-                        description = stringResource(
-                            if (expanded) Res.string.compose_player_fewer_actions else Res.string.compose_player_more_actions,
-                        ),
-                        onClick = {
-                            expanded = !expanded
-                            onInteraction()
-                        },
+                        description = stringResource(if (expanded) Res.string.compose_player_fewer_actions else Res.string.compose_player_more_actions),
+                        onClick = { expanded = !expanded; onInteraction() },
                         icon = if (expanded) Icons.AutoMirrored.Rounded.KeyboardArrowLeft else Icons.AutoMirrored.Rounded.KeyboardArrowRight,
                     )
                 }
             }
+
             Box(
-                modifier = Modifier.height(48.dp).width(104.dp).clickable(
-                    role = Role.Button,
-                    onClickLabel = stringResource(
-                        if (showRemainingTime) Res.string.compose_player_show_elapsed_time else Res.string.compose_player_show_remaining_time,
+                modifier = Modifier
+                    .align(Alignment.CenterEnd)
+                    .height(48.dp)
+                    .width(132.dp)
+                    .clickable(
+                        role = Role.Button,
+                        onClickLabel = stringResource(if (showRemainingTime) Res.string.compose_player_show_elapsed_time else Res.string.compose_player_show_remaining_time),
+                        onClick = { onRuntimeClick(); onInteraction() },
                     ),
-                    onClick = {
-                        onRuntimeClick()
-                        onInteraction()
-                    },
-                ),
                 contentAlignment = Alignment.CenterEnd,
             ) {
                 Text(
@@ -220,26 +158,11 @@ internal fun PlayerControlActions(
 }
 
 @Composable
-private fun PlayerAction(
-    description: String,
-    onClick: () -> Unit,
-    icon: ImageVector? = null,
-    painter: Painter? = null,
-    iconSize: Dp = 24.dp,
-) {
+private fun PlayerAction(description: String, onClick: () -> Unit, icon: ImageVector? = null, painter: Painter? = null, iconSize: Dp = 24.dp) {
     IconButton(onClick = onClick, modifier = Modifier.size(48.dp)) {
-        if (painter != null) {
-            Icon(painter, description, tint = Color.White, modifier = Modifier.size(iconSize))
-        } else if (icon != null) {
-            Icon(icon, description, tint = Color.White, modifier = Modifier.size(iconSize))
-        }
+        if (painter != null) Icon(painter, description, tint = Color.White, modifier = Modifier.size(iconSize))
+        else if (icon != null) Icon(icon, description, tint = Color.White, modifier = Modifier.size(iconSize))
     }
 }
 
-private data class PlayerControlAction(
-    val description: String,
-    val onClick: () -> Unit,
-    val icon: ImageVector? = null,
-    val painter: Painter? = null,
-    val iconSize: Dp = 24.dp,
-)
+private data class PlayerControlAction(val description: String, val onClick: () -> Unit, val icon: ImageVector? = null, val painter: Painter? = null, val iconSize: Dp = 24.dp)
