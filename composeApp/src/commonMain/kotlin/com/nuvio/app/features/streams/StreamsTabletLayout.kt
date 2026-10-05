@@ -41,9 +41,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
-import com.nuvio.app.core.ui.platformPhysicalTopInset
 import com.nuvio.app.core.ui.shimmer
-import com.nuvio.app.isIos
 import dev.chrisbanes.haze.HazeInputScale
 import dev.chrisbanes.haze.hazeEffect
 import dev.chrisbanes.haze.hazeSource
@@ -73,16 +71,12 @@ internal fun TabletStreamsLayout(
     modifier: Modifier = Modifier,
 ) {
     val hazeState = rememberHazeState()
-    val tabletBackdrop = remember(background, poster) {
-        background ?: poster
-    }
+    val tabletBackdrop = remember(background, poster) { background ?: poster }
     var backdropVisible by remember(tabletBackdrop) { mutableStateOf(false) }
 
     LaunchedEffect(tabletBackdrop) {
         backdropVisible = tabletBackdrop == null
-        if (tabletBackdrop != null) {
-            backdropVisible = true
-        }
+        if (tabletBackdrop != null) backdropVisible = true
     }
 
     val backdropAlpha by animateFloatAsState(
@@ -97,121 +91,87 @@ internal fun TabletStreamsLayout(
     )
 
     Box(modifier = modifier.fillMaxSize()) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .hazeSource(state = hazeState),
-        ) {
+        Box(modifier = Modifier.fillMaxSize().hazeSource(state = hazeState)) {
             if (tabletBackdrop != null) {
                 AsyncImage(
                     model = tabletBackdrop,
                     contentDescription = null,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .graphicsLayer {
-                            alpha = backdropAlpha
-                            scaleX = backdropScale
-                            scaleY = backdropScale
-                        },
+                    modifier = Modifier.fillMaxSize().graphicsLayer {
+                        alpha = backdropAlpha
+                        scaleX = backdropScale
+                        scaleY = backdropScale
+                    },
                     contentScale = ContentScale.Crop,
                 )
             } else {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(MaterialTheme.colorScheme.background),
-                )
+                Box(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background))
             }
-
             Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(
-                        Brush.verticalGradient(
-                            colors = listOf(
-                                Color.Black.copy(alpha = 0.2f),
-                                Color.Black.copy(alpha = 0.4f),
-                                Color.Black.copy(alpha = 0.6f),
-                            ),
+                Modifier.fillMaxSize().background(
+                    Brush.verticalGradient(
+                        listOf(
+                            Color.Black.copy(alpha = 0.2f),
+                            Color.Black.copy(alpha = 0.4f),
+                            Color.Black.copy(alpha = 0.6f),
                         ),
                     ),
+                ),
             )
         }
 
         Row(modifier = Modifier.fillMaxSize()) {
             Box(
-                modifier = Modifier
-                    .weight(0.4f)
-                    .fillMaxHeight()
-                    .padding(24.dp),
+                modifier = Modifier.weight(0.45f).fillMaxHeight().padding(24.dp),
                 contentAlignment = Alignment.Center,
             ) {
                 if (isEpisode && seasonNumber != null && episodeNumber != null) {
-                    TabletEpisodeInfoPanel(
-                        logo = logo,
-                        seasonNumber = seasonNumber,
-                        episodeNumber = episodeNumber,
-                        episodeTitle = episodeTitle,
-                        showTitle = title,
-                    )
+                    TabletEpisodeInfoPanel(logo, seasonNumber, episodeNumber, episodeTitle, title)
                 } else {
-                    TabletMovieInfoPanel(
-                        title = title,
-                        logo = logo,
-                    )
+                    TabletMovieInfoPanel(title, logo)
                 }
             }
 
+            // Outside-player source selector: use the same dark, clear glass language as the
+            // in-player source sheet and let it reach the top/right/bottom screen edges.
             Box(
-                modifier = Modifier
-                    .weight(0.6f)
-                    .fillMaxHeight()
-                    .padding(
-                        top = if (isIos) platformPhysicalTopInset() + 20.dp else 18.dp,
-                        end = 12.dp,
-                        bottom = 12.dp,
-                    ),
+                modifier = Modifier.weight(0.55f).fillMaxHeight(),
             ) {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
                         .graphicsLayer {
-                            shadowElevation = 18.dp.toPx()
-                            shape = RoundedCornerShape(30.dp)
+                            shadowElevation = 20.dp.toPx()
+                            shape = RoundedCornerShape(topStart = 28.dp, bottomStart = 28.dp)
                             clip = false
                         }
-                        .clip(RoundedCornerShape(30.dp))
+                        .clip(RoundedCornerShape(topStart = 28.dp, bottomStart = 28.dp))
                         .hazeEffect(state = hazeState) {
-                            inputScale = HazeInputScale.Fixed(0.72f)
-                            blurRadius = 72.dp
+                            inputScale = HazeInputScale.Fixed(0.70f)
+                            blurRadius = 58.dp
                         }
                         .background(
                             Brush.verticalGradient(
                                 colors = listOf(
-                                    Color.White.copy(alpha = 0.20f),
-                                    Color.White.copy(alpha = 0.10f),
+                                    Color.White.copy(alpha = 0.12f),
+                                    Color.Black.copy(alpha = 0.16f),
                                     Color.Black.copy(alpha = 0.30f),
                                 ),
                             ),
                         ),
                 ) {
                     Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(
-                                Brush.horizontalGradient(
-                                    colors = listOf(
-                                        Color.White.copy(alpha = 0.06f),
-                                        Color.Transparent,
-                                        Color.White.copy(alpha = 0.08f),
-                                    ),
+                        Modifier.fillMaxSize().background(
+                            Brush.horizontalGradient(
+                                listOf(
+                                    Color.White.copy(alpha = 0.045f),
+                                    Color.Transparent,
+                                    Color.White.copy(alpha = 0.025f),
                                 ),
                             ),
+                        ),
                     )
                     Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(16.dp),
+                        modifier = Modifier.fillMaxSize().padding(start = 28.dp, end = 28.dp, top = 24.dp, bottom = 20.dp),
                     ) {
                         if ((resumePositionMs != null && resumePositionMs > 0L) || (resumeProgressFraction != null && resumeProgressFraction > 0f)) {
                             ResumeBanner(
@@ -220,19 +180,13 @@ internal fun TabletStreamsLayout(
                                 modifier = Modifier.padding(bottom = 8.dp),
                             )
                         }
-
                         ProviderFilterRow(
                             groups = uiState.groups,
                             selectedFilter = uiState.selectedFilter,
                             onFilterSelected = { addonId -> StreamsRepository.selectFilter(addonId) },
                             onRefresh = onRefresh,
                         )
-
-                        ActiveScrapersStatusBlock(
-                            groups = uiState.groups,
-                            modifier = Modifier.padding(bottom = 4.dp),
-                        )
-
+                        ActiveScrapersStatusBlock(uiState.groups, Modifier.padding(bottom = 4.dp))
                         StreamList(
                             uiState = uiState,
                             debridEnabled = debridEnabled,
@@ -251,14 +205,9 @@ internal fun TabletStreamsLayout(
 }
 
 @Composable
-private fun TabletMovieInfoPanel(
-    title: String,
-    logo: String?,
-    modifier: Modifier = Modifier,
-) {
+private fun TabletMovieInfoPanel(title: String, logo: String?, modifier: Modifier = Modifier) {
     var logoLoadError by remember(logo) { mutableStateOf(false) }
     val logoUrl = logo?.takeIf { it.isNotBlank() }
-
     Column(
         modifier = modifier.fillMaxWidth(0.8f),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -268,9 +217,7 @@ private fun TabletMovieInfoPanel(
             AsyncImage(
                 model = logoUrl,
                 contentDescription = title,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(120.dp),
+                modifier = Modifier.fillMaxWidth().height(120.dp),
                 contentScale = ContentScale.Fit,
                 onError = { logoLoadError = true },
             )
@@ -281,11 +228,7 @@ private fun TabletMovieInfoPanel(
                     fontSize = 32.sp,
                     fontWeight = FontWeight.Black,
                     letterSpacing = (-0.5).sp,
-                    shadow = Shadow(
-                        color = Color.Black.copy(alpha = 0.8f),
-                        offset = Offset(0f, 2f),
-                        blurRadius = 4f,
-                    ),
+                    shadow = Shadow(Color.Black.copy(alpha = 0.8f), Offset(0f, 2f), 4f),
                 ),
                 color = MaterialTheme.colorScheme.onBackground,
                 textAlign = TextAlign.Center,
@@ -295,10 +238,7 @@ private fun TabletMovieInfoPanel(
         } else {
             Text(
                 text = stringResource(Res.string.streams_no_metadata),
-                style = MaterialTheme.typography.bodyLarge.copy(
-                    fontSize = 16.sp,
-                    fontStyle = FontStyle.Italic,
-                ),
+                style = MaterialTheme.typography.bodyLarge.copy(fontSize = 16.sp, fontStyle = FontStyle.Italic),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,
             )
@@ -317,12 +257,7 @@ private fun TabletEpisodeInfoPanel(
 ) {
     var logoLoadError by remember(logo) { mutableStateOf(false) }
     val logoUrl = logo?.takeIf { it.isNotBlank() }
-    val textShadow = Shadow(
-        color = Color.Black,
-        offset = Offset(0f, 0f),
-        blurRadius = 4f,
-    )
-
+    val textShadow = Shadow(Color.Black, Offset.Zero, 4f)
     Column(
         modifier = modifier.fillMaxWidth(0.8f),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -332,9 +267,7 @@ private fun TabletEpisodeInfoPanel(
             AsyncImage(
                 model = logoUrl,
                 contentDescription = showTitle,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(120.dp),
+                modifier = Modifier.fillMaxWidth().height(120.dp),
                 contentScale = ContentScale.Fit,
                 onError = { logoLoadError = true },
             )
@@ -353,8 +286,7 @@ private fun TabletEpisodeInfoPanel(
                 overflow = TextOverflow.Ellipsis,
             )
         }
-
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(Modifier.height(12.dp))
         Text(
             text = stringResource(
                 Res.string.streams_episode_title_with_name,
@@ -377,49 +309,30 @@ private fun TabletEpisodeInfoPanel(
 }
 
 @Composable
-private fun ActiveScrapersStatusBlock(
-    groups: List<AddonStreamGroup>,
-    modifier: Modifier = Modifier,
-) {
-    val activeScrapers = remember(groups) {
-        groups.filter { it.isLoading }.map { it.addonName }.distinct()
-    }
+private fun ActiveScrapersStatusBlock(groups: List<AddonStreamGroup>, modifier: Modifier = Modifier) {
+    val activeScrapers = remember(groups) { groups.filter { it.isLoading }.map { it.addonName }.distinct() }
     if (activeScrapers.isEmpty()) return
-
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
-    ) {
+    Column(modifier = modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp)) {
         Text(
             text = stringResource(Res.string.streams_active_scrapers),
-            style = MaterialTheme.typography.labelSmall.copy(
-                fontSize = 12.sp,
-                fontWeight = FontWeight.Medium,
-            ),
+            style = MaterialTheme.typography.labelSmall.copy(fontSize = 12.sp, fontWeight = FontWeight.Medium),
             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
         )
-        Spacer(modifier = Modifier.height(6.dp))
+        Spacer(Modifier.height(6.dp))
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .horizontalScroll(rememberScrollState()),
+            modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
             horizontalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             activeScrapers.forEach { addonName ->
                 Box(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(6.dp))
+                    modifier = Modifier.clip(RoundedCornerShape(6.dp))
                         .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.45f))
                         .padding(horizontal = 8.dp, vertical = 3.dp),
                 ) {
                     Text(
                         text = addonName,
                         modifier = Modifier.shimmer(),
-                        style = MaterialTheme.typography.labelSmall.copy(
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.Normal,
-                        ),
+                        style = MaterialTheme.typography.labelSmall.copy(fontSize = 11.sp),
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         maxLines = 1,
                     )
