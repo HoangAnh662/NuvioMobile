@@ -71,7 +71,7 @@ internal fun PlayerSidePanel(
         BoxWithConstraints(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.Black.copy(alpha = 0.34f))
+                .background(Color.Black.copy(alpha = 0.30f))
                 .clickable(
                     interactionSource = backgroundInteraction,
                     indication = null,
@@ -79,7 +79,7 @@ internal fun PlayerSidePanel(
                 ),
         ) {
             val resolvedWidth = minOf(maxWidth, width)
-            val shape = RoundedCornerShape(topStart = 16.dp, bottomStart = 16.dp)
+            val shape = RoundedCornerShape(topStart = 22.dp, bottomStart = 22.dp)
 
             AnimatedVisibility(
                 visible = visible,
@@ -93,6 +93,7 @@ internal fun PlayerSidePanel(
                         .fillMaxHeight()
                         .clip(shape)
                         .background(tokens.colors.surfaceElevated)
+                        .border(1.dp, Color.White.copy(alpha = 0.18f), shape)
                         .clickable(
                             interactionSource = panelInteraction,
                             indication = null,
@@ -112,135 +113,76 @@ internal fun PlayerPanelHeader(
     actions: @Composable RowScope.() -> Unit = {},
 ) {
     val tokens = MaterialTheme.nuvio
-
     Row(
         modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Text(
-            text = title,
-            modifier = Modifier
-                .weight(1f)
-                .padding(end = 12.dp),
-            color = tokens.colors.textPrimary,
-            style = MaterialTheme.typography.headlineSmall,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            content = actions,
-        )
+        Text(text = title, modifier = Modifier.weight(1f).padding(end = 12.dp), color = tokens.colors.textPrimary, style = MaterialTheme.typography.headlineSmall, maxLines = 1, overflow = TextOverflow.Ellipsis)
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp), content = actions)
     }
 }
 
 @Composable
-internal fun PlayerDialogButton(
-    label: String,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    enabled: Boolean = true,
-) {
+internal fun PlayerDialogButton(label: String, onClick: () -> Unit, modifier: Modifier = Modifier, enabled: Boolean = true) {
     val tokens = MaterialTheme.nuvio
-
+    val shape = RoundedCornerShape(14.dp)
     Box(
         modifier = modifier
             .alpha(if (enabled) 1f else tokens.opacity.disabled)
-            .clip(RoundedCornerShape(12.dp))
-            .background(tokens.colors.surfaceCard)
+            .clip(shape)
+            .background(Color.White.copy(alpha = 0.10f))
+            .border(1.dp, Color.White.copy(alpha = 0.26f), shape)
             .clickable(enabled = enabled, onClick = onClick)
             .padding(horizontal = 16.dp, vertical = 10.dp),
         contentAlignment = Alignment.Center,
     ) {
-        Text(
-            text = label,
-            color = tokens.colors.textSecondary,
-            style = MaterialTheme.typography.labelLarge,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
+        Text(text = label, color = tokens.colors.textPrimary, style = MaterialTheme.typography.labelLarge, maxLines = 1, overflow = TextOverflow.Ellipsis)
     }
 }
 
 @Composable
-internal fun PlayerModalLoading(
-    modifier: Modifier = Modifier,
-) {
-    Box(
-        modifier = modifier.fillMaxWidth(),
-        contentAlignment = Alignment.Center,
-    ) {
-        NuvioLoadingIndicator(
-            modifier = Modifier.size(24.dp),
-        )
+internal fun PlayerModalLoading(modifier: Modifier = Modifier) {
+    Box(modifier = modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+        NuvioLoadingIndicator(modifier = Modifier.size(24.dp))
     }
 }
 
 @Composable
-internal fun PlayerProviderFilterRow(
-    streamsUiState: StreamsUiState,
-    onFilterSelected: (String?) -> Unit,
-    modifier: Modifier = Modifier,
-) {
+internal fun PlayerProviderFilterRow(streamsUiState: StreamsUiState, onFilterSelected: (String?) -> Unit, modifier: Modifier = Modifier) {
     ProviderFilterRow(
         groups = streamsUiState.groups,
         selectedFilter = streamsUiState.selectedFilter,
         onFilterSelected = onFilterSelected,
         modifier = modifier,
         contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp),
-        spacing = 16.dp,
+        spacing = 12.dp,
     ) { group, isSelected, onClick ->
-        AddonFilterChip(
-            label = group?.addonName ?: stringResource(Res.string.collections_tab_all),
-            isSelected = isSelected,
-            isLoading = group?.isLoading == true,
-            hasError = group?.error != null,
-            onClick = onClick,
-        )
+        AddonFilterChip(label = group?.addonName ?: stringResource(Res.string.collections_tab_all), isSelected = isSelected, isLoading = group?.isLoading == true, hasError = group?.error != null, onClick = onClick)
     }
 }
 
 @Composable
-private fun AddonFilterChip(
-    label: String,
-    isSelected: Boolean,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    isLoading: Boolean = false,
-    hasError: Boolean = false,
-) {
+private fun AddonFilterChip(label: String, isSelected: Boolean, onClick: () -> Unit, modifier: Modifier = Modifier, isLoading: Boolean = false, hasError: Boolean = false) {
     val tokens = MaterialTheme.nuvio
+    val shape = RoundedCornerShape(20.dp)
     val containerColor = when {
-        hasError -> tokens.colors.danger.copy(alpha = 0.06f)
-        isSelected -> tokens.colors.accent
-        else -> tokens.colors.surfaceCard
+        hasError -> tokens.colors.danger.copy(alpha = 0.10f)
+        isSelected -> Color.White.copy(alpha = 0.18f)
+        else -> Color.White.copy(alpha = 0.08f)
     }
     val contentColor = when {
         hasError -> tokens.colors.danger
-        isSelected -> tokens.colors.onAccent
-        else -> tokens.colors.textSecondary
+        else -> Color.White.copy(alpha = if (isSelected) 1f else 0.82f)
     }
-
     Box(
         modifier = modifier
-            .clip(RoundedCornerShape(20.dp))
+            .clip(shape)
             .background(containerColor)
-            .border(
-                1.dp,
-                if (hasError) tokens.colors.danger.copy(alpha = 0.7f) else tokens.colors.borderDefault,
-                RoundedCornerShape(20.dp),
-            )
+            .border(1.dp, if (hasError) tokens.colors.danger.copy(alpha = 0.7f) else Color.White.copy(alpha = if (isSelected) 0.55f else 0.24f), shape)
             .clickable(onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 10.dp),
+            .padding(horizontal = 16.dp, vertical = 9.dp),
     ) {
-        Text(
-            text = label,
-            modifier = Modifier.shimmer(isLoading),
-            color = contentColor,
-            style = MaterialTheme.typography.labelLarge,
-            fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
-            maxLines = 1,
-        )
+        Text(text = label, modifier = Modifier.shimmer(isLoading), color = contentColor, style = MaterialTheme.typography.labelLarge, fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal, maxLines = 1)
     }
 }
