@@ -3,6 +3,7 @@ package com.nuvio.app.features.streams
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -110,9 +111,9 @@ internal fun TabletStreamsLayout(
                 Modifier.fillMaxSize().background(
                     Brush.verticalGradient(
                         listOf(
-                            Color.Black.copy(alpha = 0.2f),
-                            Color.Black.copy(alpha = 0.4f),
-                            Color.Black.copy(alpha = 0.6f),
+                            Color.Black.copy(alpha = 0.12f),
+                            Color.Black.copy(alpha = 0.28f),
+                            Color.Black.copy(alpha = 0.48f),
                         ),
                     ),
                 ),
@@ -121,7 +122,7 @@ internal fun TabletStreamsLayout(
 
         Row(modifier = Modifier.fillMaxSize()) {
             Box(
-                modifier = Modifier.weight(0.45f).fillMaxHeight().padding(24.dp),
+                modifier = Modifier.weight(0.43f).fillMaxHeight().padding(24.dp),
                 contentAlignment = Alignment.Center,
             ) {
                 if (isEpisode && seasonNumber != null && episodeNumber != null) {
@@ -131,41 +132,43 @@ internal fun TabletStreamsLayout(
                 }
             }
 
-            // Outside-player source selector: use the same dark, clear glass language as the
-            // in-player source sheet and let it reach the top/right/bottom screen edges.
             Box(
-                modifier = Modifier.weight(0.55f).fillMaxHeight(),
+                modifier = Modifier.weight(0.57f).fillMaxHeight(),
+                contentAlignment = Alignment.CenterEnd,
             ) {
+                val panelShape = RoundedCornerShape(30.dp)
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
+                        .padding(top = 14.dp, end = 14.dp, bottom = 14.dp, start = 4.dp)
                         .graphicsLayer {
-                            shadowElevation = 20.dp.toPx()
-                            shape = RoundedCornerShape(topStart = 28.dp, bottomStart = 28.dp)
+                            shadowElevation = 18.dp.toPx()
+                            shape = panelShape
                             clip = false
                         }
-                        .clip(RoundedCornerShape(topStart = 28.dp, bottomStart = 28.dp))
+                        .clip(panelShape)
                         .hazeEffect(state = hazeState) {
-                            inputScale = HazeInputScale.Fixed(0.70f)
-                            blurRadius = 58.dp
+                            inputScale = HazeInputScale.Fixed(0.82f)
+                            blurRadius = 36.dp
                         }
                         .background(
                             Brush.verticalGradient(
                                 colors = listOf(
-                                    Color.White.copy(alpha = 0.12f),
-                                    Color.Black.copy(alpha = 0.16f),
-                                    Color.Black.copy(alpha = 0.30f),
+                                    Color.White.copy(alpha = 0.13f),
+                                    Color.Black.copy(alpha = 0.08f),
+                                    Color.Black.copy(alpha = 0.18f),
                                 ),
                             ),
-                        ),
+                        )
+                        .border(1.25.dp, Color.White.copy(alpha = 0.38f), panelShape),
                 ) {
                     Box(
                         Modifier.fillMaxSize().background(
                             Brush.horizontalGradient(
                                 listOf(
-                                    Color.White.copy(alpha = 0.045f),
+                                    Color.White.copy(alpha = 0.055f),
                                     Color.Transparent,
-                                    Color.White.copy(alpha = 0.025f),
+                                    Color.White.copy(alpha = 0.035f),
                                 ),
                             ),
                         ),
@@ -214,97 +217,28 @@ private fun TabletMovieInfoPanel(title: String, logo: String?, modifier: Modifie
         verticalArrangement = Arrangement.Center,
     ) {
         if (logoUrl != null && !logoLoadError) {
-            AsyncImage(
-                model = logoUrl,
-                contentDescription = title,
-                modifier = Modifier.fillMaxWidth().height(120.dp),
-                contentScale = ContentScale.Fit,
-                onError = { logoLoadError = true },
-            )
+            AsyncImage(model = logoUrl, contentDescription = title, modifier = Modifier.fillMaxWidth().height(120.dp), contentScale = ContentScale.Fit, onError = { logoLoadError = true })
         } else if (title.isNotBlank()) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.displayLarge.copy(
-                    fontSize = 32.sp,
-                    fontWeight = FontWeight.Black,
-                    letterSpacing = (-0.5).sp,
-                    shadow = Shadow(Color.Black.copy(alpha = 0.8f), Offset(0f, 2f), 4f),
-                ),
-                color = MaterialTheme.colorScheme.onBackground,
-                textAlign = TextAlign.Center,
-                maxLines = 3,
-                overflow = TextOverflow.Ellipsis,
-            )
+            Text(text = title, style = MaterialTheme.typography.displayLarge.copy(fontSize = 32.sp, fontWeight = FontWeight.Black, letterSpacing = (-0.5).sp, shadow = Shadow(Color.Black.copy(alpha = 0.8f), Offset(0f, 2f), 4f)), color = MaterialTheme.colorScheme.onBackground, textAlign = TextAlign.Center, maxLines = 3, overflow = TextOverflow.Ellipsis)
         } else {
-            Text(
-                text = stringResource(Res.string.streams_no_metadata),
-                style = MaterialTheme.typography.bodyLarge.copy(fontSize = 16.sp, fontStyle = FontStyle.Italic),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Center,
-            )
+            Text(text = stringResource(Res.string.streams_no_metadata), style = MaterialTheme.typography.bodyLarge.copy(fontSize = 16.sp, fontStyle = FontStyle.Italic), color = MaterialTheme.colorScheme.onSurfaceVariant, textAlign = TextAlign.Center)
         }
     }
 }
 
 @Composable
-private fun TabletEpisodeInfoPanel(
-    logo: String?,
-    seasonNumber: Int,
-    episodeNumber: Int,
-    episodeTitle: String?,
-    showTitle: String,
-    modifier: Modifier = Modifier,
-) {
+private fun TabletEpisodeInfoPanel(logo: String?, seasonNumber: Int, episodeNumber: Int, episodeTitle: String?, showTitle: String, modifier: Modifier = Modifier) {
     var logoLoadError by remember(logo) { mutableStateOf(false) }
     val logoUrl = logo?.takeIf { it.isNotBlank() }
     val textShadow = Shadow(Color.Black, Offset.Zero, 4f)
-    Column(
-        modifier = modifier.fillMaxWidth(0.8f),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-    ) {
+    Column(modifier = modifier.fillMaxWidth(0.8f), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
         if (logoUrl != null && !logoLoadError) {
-            AsyncImage(
-                model = logoUrl,
-                contentDescription = showTitle,
-                modifier = Modifier.fillMaxWidth().height(120.dp),
-                contentScale = ContentScale.Fit,
-                onError = { logoLoadError = true },
-            )
+            AsyncImage(model = logoUrl, contentDescription = showTitle, modifier = Modifier.fillMaxWidth().height(120.dp), contentScale = ContentScale.Fit, onError = { logoLoadError = true })
         } else {
-            Text(
-                text = showTitle,
-                style = MaterialTheme.typography.displayMedium.copy(
-                    fontSize = 28.sp,
-                    fontWeight = FontWeight.Black,
-                    letterSpacing = (-0.5).sp,
-                    shadow = textShadow,
-                ),
-                color = MaterialTheme.colorScheme.onBackground,
-                textAlign = TextAlign.Center,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-            )
+            Text(text = showTitle, style = MaterialTheme.typography.displayMedium.copy(fontSize = 28.sp, fontWeight = FontWeight.Black, letterSpacing = (-0.5).sp, shadow = textShadow), color = MaterialTheme.colorScheme.onBackground, textAlign = TextAlign.Center, maxLines = 2, overflow = TextOverflow.Ellipsis)
         }
         Spacer(Modifier.height(12.dp))
-        Text(
-            text = stringResource(
-                Res.string.streams_episode_title_with_name,
-                seasonNumber,
-                episodeNumber,
-                episodeTitle?.takeIf { it.isNotBlank() } ?: stringResource(Res.string.streams_episode_fallback_title),
-            ),
-            style = MaterialTheme.typography.bodyLarge.copy(
-                fontSize = 16.sp,
-                lineHeight = 24.sp,
-                fontWeight = FontWeight.SemiBold,
-                shadow = textShadow,
-            ),
-            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.95f),
-            textAlign = TextAlign.Center,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
+        Text(text = stringResource(Res.string.streams_episode_title_with_name, seasonNumber, episodeNumber, episodeTitle?.takeIf { it.isNotBlank() } ?: stringResource(Res.string.streams_episode_fallback_title)), style = MaterialTheme.typography.bodyLarge.copy(fontSize = 16.sp, lineHeight = 24.sp, fontWeight = FontWeight.SemiBold, shadow = textShadow), color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.95f), textAlign = TextAlign.Center, maxLines = 1, overflow = TextOverflow.Ellipsis)
     }
 }
 
@@ -313,29 +247,12 @@ private fun ActiveScrapersStatusBlock(groups: List<AddonStreamGroup>, modifier: 
     val activeScrapers = remember(groups) { groups.filter { it.isLoading }.map { it.addonName }.distinct() }
     if (activeScrapers.isEmpty()) return
     Column(modifier = modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp)) {
-        Text(
-            text = stringResource(Res.string.streams_active_scrapers),
-            style = MaterialTheme.typography.labelSmall.copy(fontSize = 12.sp, fontWeight = FontWeight.Medium),
-            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
-        )
+        Text(text = stringResource(Res.string.streams_active_scrapers), style = MaterialTheme.typography.labelSmall.copy(fontSize = 12.sp, fontWeight = FontWeight.Medium), color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f))
         Spacer(Modifier.height(6.dp))
-        Row(
-            modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
-        ) {
+        Row(modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
             activeScrapers.forEach { addonName ->
-                Box(
-                    modifier = Modifier.clip(RoundedCornerShape(6.dp))
-                        .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.45f))
-                        .padding(horizontal = 8.dp, vertical = 3.dp),
-                ) {
-                    Text(
-                        text = addonName,
-                        modifier = Modifier.shimmer(),
-                        style = MaterialTheme.typography.labelSmall.copy(fontSize = 11.sp),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        maxLines = 1,
-                    )
+                Box(modifier = Modifier.clip(RoundedCornerShape(6.dp)).background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.45f)).padding(horizontal = 8.dp, vertical = 3.dp)) {
+                    Text(text = addonName, modifier = Modifier.shimmer(), style = MaterialTheme.typography.labelSmall.copy(fontSize = 11.sp), color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1)
                 }
             }
         }
