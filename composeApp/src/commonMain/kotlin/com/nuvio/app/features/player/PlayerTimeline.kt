@@ -59,14 +59,14 @@ internal fun PlayerTimelineDetails(
     val typeScale = MaterialTheme.nuvioTypeScale
     Column(Modifier.padding(horizontal = PlayerTimelineContentInset)) {
         Text(
-            text = title,
+            text = if (releaseInfo.isNullOrBlank()) title else "$title • ${releaseInfo.trim()}",
             style = typeScale.titleLg.copy(
                 fontSize = metrics.titleSize * 0.80f,
                 lineHeight = metrics.titleSize * 0.94f,
                 fontWeight = FontWeight.SemiBold,
             ),
             color = Color.White,
-            maxLines = 1,
+            maxLines = 2,
             overflow = TextOverflow.Ellipsis,
         )
         if (seasonNumber != null && episodeNumber != null) {
@@ -75,15 +75,6 @@ internal fun PlayerTimelineDetails(
                 text = if (episodeTitle.isNullOrBlank()) episodeCode else "$episodeCode • $episodeTitle",
                 style = typeScale.bodyMd.copy(fontSize = metrics.episodeInfoSize),
                 color = Color.White.copy(alpha = 0.9f),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-        }
-        if (!releaseInfo.isNullOrBlank()) {
-            Text(
-                text = releaseInfo,
-                style = typeScale.labelSm.copy(fontSize = metrics.metadataSize),
-                color = Color.White.copy(alpha = 0.68f),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
