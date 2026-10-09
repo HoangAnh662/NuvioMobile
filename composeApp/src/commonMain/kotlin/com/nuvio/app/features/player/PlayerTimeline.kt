@@ -58,7 +58,7 @@ internal fun PlayerTimelineDetails(
     metrics: PlayerLayoutMetrics,
 ) {
     val typeScale = MaterialTheme.nuvioTypeScale
-    Column(Modifier.padding(horizontal = PlayerTimelineContentInset)) {
+    Column(Modifier.padding(horizontal = PlayerTimelineContentInset).padding(bottom = 12.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
                 text = title,
