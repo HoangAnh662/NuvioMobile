@@ -75,7 +75,11 @@ internal fun PlayerTimelineDetails(
             if (!releaseInfo.isNullOrBlank()) {
                 Text(
                     text = " • ${releaseInfo.trim()}",
-                    style = typeScale.labelSm.copy(fontSize = metrics.titleSize * 0.58f),
+                    style = typeScale.titleLg.copy(
+                        fontSize = metrics.titleSize * 1.05f,
+                        lineHeight = metrics.titleSize * 1.20f,
+                        fontWeight = FontWeight.SemiBold,
+                    ),
                     color = Color.White.copy(alpha = 0.85f),
                     maxLines = 1,
                 )
