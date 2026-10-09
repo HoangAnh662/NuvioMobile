@@ -6,6 +6,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsDraggedAsState
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -58,17 +59,28 @@ internal fun PlayerTimelineDetails(
 ) {
     val typeScale = MaterialTheme.nuvioTypeScale
     Column(Modifier.padding(horizontal = PlayerTimelineContentInset)) {
-        Text(
-            text = if (releaseInfo.isNullOrBlank()) title else "$title • ${releaseInfo.trim()}",
-            style = typeScale.titleLg.copy(
-                fontSize = metrics.titleSize * 0.80f,
-                lineHeight = metrics.titleSize * 0.94f,
-                fontWeight = FontWeight.SemiBold,
-            ),
-            color = Color.White,
-            maxLines = 2,
-            overflow = TextOverflow.Ellipsis,
-        )
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                text = title,
+                modifier = Modifier.weight(1f, fill = false),
+                style = typeScale.titleLg.copy(
+                    fontSize = metrics.titleSize * 0.62f,
+                    lineHeight = metrics.titleSize * 0.78f,
+                    fontWeight = FontWeight.SemiBold,
+                ),
+                color = Color.White,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+            )
+            if (!releaseInfo.isNullOrBlank()) {
+                Text(
+                    text = " • ${releaseInfo.trim()}",
+                    style = typeScale.labelSm.copy(fontSize = metrics.titleSize * 0.58f),
+                    color = Color.White.copy(alpha = 0.85f),
+                    maxLines = 1,
+                )
+            }
+        }
         if (seasonNumber != null && episodeNumber != null) {
             val episodeCode = stringResource(Res.string.compose_player_episode_code_full, seasonNumber, episodeNumber)
             Text(
