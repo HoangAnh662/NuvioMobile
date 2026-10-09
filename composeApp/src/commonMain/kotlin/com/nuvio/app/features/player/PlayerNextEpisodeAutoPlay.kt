@@ -30,6 +30,17 @@ internal fun PlayerScreenRuntime.isAtNextEpisodeThreshold(): Boolean {
         !initialSeekApplied || isScrubbingTimeline || errorMessage != null ||
         isShortPlaceholderDuration(playbackSnapshot.durationMs)
     ) return false
+    if (!nextEpisodePreloadTriggered && nextEpisodeInfo?.hasAired == true) {
+        val leadMs = playerSettingsUiState.streamAutoPlayTimeoutSeconds.toLong().coerceIn(1L, 30L) * 1_000L
+        if (PlayerNextEpisodeRules.shouldShowNextEpisodeCard(
+                positionMs = playbackSnapshot.positionMs + leadMs,
+                durationMs = playbackSnapshot.durationMs,
+                skipIntervals = skipIntervals,
+                thresholdMode = playerSettingsUiState.nextEpisodeThresholdMode,
+                thresholdPercent = playerSettingsUiState.nextEpisodeThresholdPercent,
+                thresholdMinutesBeforeEnd = playerSettingsUiState.nextEpisodeThresholdMinutesBeforeEnd,
+            )) preloadNextEpisodeSources()
+    }
     return playbackSnapshot.isEnded || PlayerNextEpisodeRules.shouldShowNextEpisodeCard(
         positionMs = playbackSnapshot.positionMs,
         durationMs = playbackSnapshot.durationMs,
@@ -330,4 +341,24 @@ internal fun CoroutineScope.launchPlayerNextEpisodeAutoPlay(
             onNextEpisodeCardVisibleChanged(false)
         }
     }
+}
+
+internal fun PlayerScreenRuntime.preloadNextEpisodeSources() {
+    if (nextEpisodePreloadTriggered) return
+    val next = nextEpisodeInfo ?: return
+    if (next.hasAired != true) return
+    val type = contentType ?: return
+    nextEpisodePreloadTriggered = true
+    nextEpisodePreloadJob?.cancel()
+    nextEpisodePreloadJob = scope.launch {
+        PlayerStreamsRepository.loadEpisodeStreams(
+            type = type, videoId = next.videoId, season = next.season, episode = next.episode,
+        )
+    }
+}
+
+internal fun PlayerScreenRuntime.cancelNextEpisodePreload() {
+    nextEpisodePreloadJob?.cancel()
+    nextEpisodePreloadJob = null
+    nextEpisodePreloadTriggered = false
 }
