@@ -64,8 +64,8 @@ internal fun PlayerTimelineDetails(
                 text = title,
                 modifier = Modifier.weight(1f, fill = false),
                 style = typeScale.titleLg.copy(
-                    fontSize = metrics.titleSize * 1.05f,
-                    lineHeight = metrics.titleSize * 1.20f,
+                    fontSize = metrics.titleSize * 0.90f,
+                    lineHeight = metrics.titleSize * 1.05f,
                     fontWeight = FontWeight.SemiBold,
                 ),
                 color = Color.White,
@@ -76,8 +76,8 @@ internal fun PlayerTimelineDetails(
                 Text(
                     text = " • ${releaseInfo.trim()}",
                     style = typeScale.titleLg.copy(
-                        fontSize = metrics.titleSize * 1.05f,
-                        lineHeight = metrics.titleSize * 1.20f,
+                        fontSize = metrics.titleSize * 0.90f,
+                        lineHeight = metrics.titleSize * 1.05f,
                         fontWeight = FontWeight.SemiBold,
                     ),
                     color = Color.White.copy(alpha = 0.85f),
