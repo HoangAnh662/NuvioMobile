@@ -263,32 +263,20 @@ internal fun CoroutineScope.launchPlayerNextEpisodeAutoPlay(
         val isBoundedTimeout = timeoutSeconds in 1..30
 
         if (isBoundedTimeout) {
-            delay(timeoutMs)
-            timeoutElapsed = true
-            if (!autoSelectTriggered) {
-                val allStreams = PlayerStreamsRepository.episodeStreamsState.value.groups.flatMap { it.streams }
-                if (allStreams.isNotEmpty()) {
-                    val candidate = trySelectStream(allStreams)
-                    if (candidate != null) {
-                        selectStream(candidate)
+            // Cached/preloaded streams can settle immediately without waiting for timeout.
+            val settled = withTimeoutOrNull(timeoutMs) { autoSelectSettled.await() }
+            if (settled == null) {
+                timeoutElapsed = true
+                if (!autoSelectTriggered) {
+                    val allStreams = PlayerStreamsRepository.episodeStreamsState.value.groups.flatMap { it.streams }
+                    if (allStreams.isNotEmpty()) {
+                        trySelectStream(allStreams)?.let(::selectStream)
                     }
                 }
             }
-            if (selectedStream != null) {
-                innerJob.cancel()
-            } else if (PlayerStreamsRepository.episodeStreamsState.value.groups.flatMap { it.streams }.isNotEmpty()) {
-                innerJob.cancel()
+            innerJob.cancel()
+            if (selectedStream == null && !autoSelectTriggered) {
                 finishWithoutSelection()
-            } else {
-                val completed = withTimeoutOrNull(timeoutMs) { autoSelectSettled.await() }
-                innerJob.cancel()
-                if (completed == null && !autoSelectTriggered) {
-                    val allStreams = PlayerStreamsRepository.episodeStreamsState.value.groups.flatMap { it.streams }
-                    if (allStreams.isNotEmpty()) {
-                        selectedStream = trySelectStream(allStreams)
-                    }
-                    finishWithoutSelection()
-                }
             }
         } else {
             timeoutElapsed = true
