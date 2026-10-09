@@ -64,8 +64,8 @@ internal fun PlayerTimelineDetails(
                 text = title,
                 modifier = Modifier.weight(1f, fill = false),
                 style = typeScale.titleLg.copy(
-                    fontSize = metrics.titleSize * 0.62f,
-                    lineHeight = metrics.titleSize * 0.78f,
+                    fontSize = metrics.titleSize * 0.80f,
+                    lineHeight = metrics.titleSize * 0.94f,
                     fontWeight = FontWeight.SemiBold,
                 ),
                 color = Color.White,
