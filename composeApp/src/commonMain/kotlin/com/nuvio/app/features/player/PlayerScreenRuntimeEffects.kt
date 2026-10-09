@@ -80,6 +80,7 @@ internal fun PlayerScreenRuntime.BindPlayerRuntimeEffects() {
         playbackSnapshot = PlayerPlaybackSnapshot()
         playbackSnapshotKey = null
         cancelNextEpisodeAutoPlay()
+        cancelNextEpisodePreload()
         isScrubbingTimeline = false
         scrubbingPositionMs = null
         liveGestureFeedback = null
