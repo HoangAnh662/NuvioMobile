@@ -16,6 +16,8 @@ jobs:
           distribution: temurin
           java-version: '17'
       - uses: gradle/actions/setup-gradle@v4
+      - name: Create required local properties
+        run: touch local.properties
       - name: Build full debug APK
         run: ./gradlew :androidApp:assembleFullDebug --stacktrace
       - name: Upload debug APK
