@@ -88,7 +88,7 @@ fun PlayerEpisodesPanel(
     PlayerSidePanel(
         visible = visible,
         onDismiss = onDismiss,
-        width = 460.dp,
+        width = 420.dp,
         modifier = modifier,
     ) {
         Column(
@@ -346,7 +346,7 @@ private fun EpisodeRow(
         modifier = Modifier
             .fillMaxWidth()
             .clip(cardShape)
-             .background(Color.Black.copy(alpha = 0.25f))
+             .background(Color.Black.copy(alpha = 0.15f))
             .then(
                 if (isCurrent) {
                     Modifier.border(width = 2.dp, color = tokens.colors.focusRing, shape = cardShape)
