@@ -80,7 +80,7 @@ internal fun PlayerSidePanel(
                 ),
         ) {
             val isStreamPanel = width == 520.dp
-            val resolvedWidth = minOf(maxWidth, if (isStreamPanel) 360.dp else width)
+            val resolvedWidth = minOf(maxWidth, if (isStreamPanel) 330.dp else width)
             val shape = RoundedCornerShape(topStart = 22.dp, bottomStart = 22.dp)
 
             AnimatedVisibility(
@@ -94,7 +94,7 @@ internal fun PlayerSidePanel(
                         .width(resolvedWidth)
                         .fillMaxHeight()
                         .clip(shape)
-                        .background(Brush.verticalGradient(listOf(Color.White.copy(alpha = if (isStreamPanel) 0.22f else 0.18f), Color.Black.copy(alpha = 0.18f), Color.Black.copy(alpha = if (isStreamPanel) 0.34f else 0.38f))))
+                        .background(Brush.verticalGradient(listOf(Color.White.copy(alpha = if (isStreamPanel) 0.22f else 0.12f), Color.Black.copy(alpha = if (isStreamPanel) 0.18f else 0.10f), Color.Black.copy(alpha = if (isStreamPanel) 0.34f else 0.23f))))
                         .border(1.5.dp, Color.White.copy(alpha = if (isStreamPanel) 0.46f else 0.38f), shape)
                         .clickable(
                             interactionSource = panelInteraction,
