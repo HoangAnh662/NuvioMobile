@@ -16,8 +16,17 @@ jobs:
           distribution: temurin
           java-version: '17'
       - uses: gradle/actions/setup-gradle@v4
-      - name: Create required local properties
-        run: touch local.properties
+      - name: Configure login and runtime services
+        env:
+          SUPABASE_ANON_KEY: ${{ secrets.NUVIO_SUPABASE_ANON_KEY }}
+        run: |
+          if [ -z "$SUPABASE_ANON_KEY" ]; then
+            echo "::error::Missing NUVIO_SUPABASE_ANON_KEY GitHub secret"
+            exit 1
+          fi
+          printf 'sdk.dir=%s\n' "$ANDROID_HOME" > local.properties
+          printf 'NUVIO_SUPABASE_URL=https://api.nuvio.tv\n' >> local.properties
+          printf 'NUVIO_SUPABASE_ANON_KEY=%s\n' "$SUPABASE_ANON_KEY" >> local.properties
       - name: Build full debug APK
         run: ./gradlew :androidApp:assembleFullDebug --stacktrace
       - name: Upload debug APK
