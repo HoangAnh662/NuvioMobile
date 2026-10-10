@@ -545,6 +545,8 @@ private fun SideControlButton(
     Box(
         modifier = Modifier
             .clip(CircleShape)
+            .background(Brush.verticalGradient(listOf(Color.White.copy(alpha = 0.32f), Color.White.copy(alpha = 0.10f), Color.Black.copy(alpha = 0.16f))))
+            .border(2.dp, Color.White.copy(alpha = 0.90f), CircleShape)
             .clickable(onClick = onClick)
             .padding(metrics.sideButtonPadding),
         contentAlignment = Alignment.Center,
@@ -572,6 +574,8 @@ internal fun PlayPauseControlButton(
     Box(
         modifier = Modifier
             .clip(CircleShape)
+            .background(Brush.verticalGradient(listOf(Color.White.copy(alpha = 0.36f), Color.White.copy(alpha = 0.12f), Color.Black.copy(alpha = 0.18f))))
+            .border(2.dp, Color.White.copy(alpha = 0.94f), CircleShape)
             .clickable(onClick = onClick)
             .padding(metrics.playButtonPadding),
         contentAlignment = Alignment.Center,
