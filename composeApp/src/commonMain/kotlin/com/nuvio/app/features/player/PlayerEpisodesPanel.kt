@@ -94,7 +94,7 @@ fun PlayerEpisodesPanel(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(24.dp),
+                .padding(start = 24.dp, top = 24.dp, end = 8.dp, bottom = 24.dp),
         ) {
             PlayerPanelHeader(
                 title = if (episodeStreamsState.showStreams) {
@@ -346,7 +346,7 @@ private fun EpisodeRow(
         modifier = Modifier
             .fillMaxWidth()
             .clip(cardShape)
-             .background(Color.Black.copy(alpha = 0.38f))
+             .background(Color.Black.copy(alpha = 0.25f))
             .then(
                 if (isCurrent) {
                     Modifier.border(width = 2.dp, color = tokens.colors.focusRing, shape = cardShape)
@@ -359,7 +359,7 @@ private fun EpisodeRow(
             }
             .clickable(onClick = onClick)
             .padding(10.dp),
-        verticalAlignment = Alignment.Top,
+        verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(14.dp),
     ) {
         Box(
@@ -402,7 +402,7 @@ private fun EpisodeRow(
 
         Column(
             modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(4.dp),
+            verticalArrangement = Arrangement.Center,
         ) {
             Text(
                 text = episode.title,
