@@ -88,6 +88,7 @@ fun PlayerEpisodesPanel(
     PlayerSidePanel(
         visible = visible,
         onDismiss = onDismiss,
+        width = 460.dp,
         modifier = modifier,
     ) {
         Column(
@@ -299,7 +300,7 @@ private fun EpisodeSeasonChip(
     Box(
         modifier = Modifier
             .clip(shape)
-            .background(if (isSelected) Color(0xFFF5F5F5) else tokens.colors.surfaceCard)
+            .background(if (isSelected) Color(0xFFF5F5F5) else Color.Black.copy(alpha = 0.28f))
             .border(
                 1.dp,
                 if (isSelected) Color.Transparent else tokens.colors.borderDefault,
@@ -345,7 +346,7 @@ private fun EpisodeRow(
         modifier = Modifier
             .fillMaxWidth()
             .clip(cardShape)
-            .background(tokens.colors.surfaceCard)
+             .background(Color.Black.copy(alpha = 0.38f))
             .then(
                 if (isCurrent) {
                     Modifier.border(width = 2.dp, color = tokens.colors.focusRing, shape = cardShape)
