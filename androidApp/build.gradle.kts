@@ -123,6 +123,11 @@ android {
 }
 
 androidComponents {
+    onVariants(selector().withBuildType("release")) { variant ->
+        if (providers.gradleProperty("nuvio.preload.test").orNull == "true") {
+            variant.applicationId.set("com.nuvio.app.beta055.preload")
+        }
+    }
     onVariants(selector().withBuildType("debug")) { variant ->
         variant.applicationId.set("com.nuvio.app.beta055.debug")
     }
