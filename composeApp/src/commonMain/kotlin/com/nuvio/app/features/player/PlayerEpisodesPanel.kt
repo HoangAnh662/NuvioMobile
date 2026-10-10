@@ -300,7 +300,7 @@ private fun EpisodeSeasonChip(
     Box(
         modifier = Modifier
             .clip(shape)
-            .background(if (isSelected) Color(0xFFF5F5F5) else Color.Black.copy(alpha = 0.28f))
+            .background(if (isSelected) Color(0xFFF5F5F5) else tokens.colors.surfaceCard)
             .border(
                 1.dp,
                 if (isSelected) Color.Transparent else tokens.colors.borderDefault,
