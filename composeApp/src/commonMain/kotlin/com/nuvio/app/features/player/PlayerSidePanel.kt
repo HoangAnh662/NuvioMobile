@@ -33,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -78,7 +79,8 @@ internal fun PlayerSidePanel(
                     onClick = onDismiss,
                 ),
         ) {
-            val resolvedWidth = minOf(maxWidth, width)
+            val isStreamPanel = width == 520.dp
+            val resolvedWidth = minOf(maxWidth, if (isStreamPanel) 360.dp else width)
             val shape = RoundedCornerShape(topStart = 22.dp, bottomStart = 22.dp)
 
             AnimatedVisibility(
@@ -92,8 +94,8 @@ internal fun PlayerSidePanel(
                         .width(resolvedWidth)
                         .fillMaxHeight()
                         .clip(shape)
-                        .background(tokens.colors.surfaceElevated)
-                        .border(1.dp, Color.White.copy(alpha = 0.18f), shape)
+                        .background(Brush.verticalGradient(listOf(Color.White.copy(alpha = if (isStreamPanel) 0.22f else 0.18f), Color.Black.copy(alpha = 0.18f), Color.Black.copy(alpha = if (isStreamPanel) 0.34f else 0.38f))))
+                        .border(1.5.dp, Color.White.copy(alpha = if (isStreamPanel) 0.46f else 0.38f), shape)
                         .clickable(
                             interactionSource = panelInteraction,
                             indication = null,
