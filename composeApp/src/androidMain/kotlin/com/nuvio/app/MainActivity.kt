@@ -36,7 +36,6 @@ import com.nuvio.app.features.player.PlayerTrackPreferenceStorage
 import com.nuvio.app.features.player.ExternalPlayerPlatform
 import com.nuvio.app.features.player.SubtitleFileCache
 import com.nuvio.app.features.player.PlayerPictureInPictureManager
-import com.nuvio.app.features.player.PipRemoteActionReceiver
 import com.nuvio.app.features.p2p.P2pSettingsStorage
 import com.nuvio.app.features.p2p.P2pStreamingEngine
 import com.nuvio.app.features.plugins.PluginStorage
@@ -72,7 +71,6 @@ import com.nuvio.app.features.watchprogress.ResumePromptStorage
 import com.nuvio.app.features.watchprogress.WatchProgressStorage
 
 open class MainActivity : AppCompatActivity() {
-    private var pipRemoteActionReceiver: PipRemoteActionReceiver? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
@@ -87,7 +85,6 @@ open class MainActivity : AppCompatActivity() {
         SentryInitializer.start(application)
         super.onCreate(savedInstanceState)
         window.setBackgroundDrawableResource(R.color.nuvio_background)
-        pipRemoteActionReceiver = PipRemoteActionReceiver.register(this)
         SyncClientIdentityStorage.initialize(applicationContext)
         AddonHttpClientProvider.initialize(applicationContext)
         AddonStorage.initialize(applicationContext)
@@ -172,11 +169,6 @@ open class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         EpisodeReleaseNotificationPlatform.unbindActivity(this)
-        val receiver = pipRemoteActionReceiver
-        if (receiver != null) {
-            runCatching { unregisterReceiver(receiver) }
-            pipRemoteActionReceiver = null
-        }
         super.onDestroy()
     }
 
