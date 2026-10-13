@@ -167,6 +167,10 @@
             android:stopWithTask="false" />
 
         <receiver
+            android:name="com.nuvio.app.features.player.PipRemoteActionReceiver"
+            android:exported="false" />
+
+        <receiver
             android:name="com.nuvio.app.features.player.PlayerNowPlayingActionReceiver"
             android:exported="false" />
 
