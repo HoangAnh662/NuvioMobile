@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - test/preload-058-selective
+      - fix/pip-pause-remote-action
   workflow_dispatch:
 permissions:
   contents: read
