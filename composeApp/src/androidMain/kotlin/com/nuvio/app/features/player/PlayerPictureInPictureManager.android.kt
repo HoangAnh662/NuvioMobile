@@ -101,12 +101,9 @@ internal object PlayerPictureInPictureManager {
     }
 
     fun toggleViaRemoteAction(context: Context) {
-        val wasPlaying = sessionState.isPlaying
-        togglePlaybackCallback?.invoke()
-        sessionState = sessionState.copy(isPlaying = !wasPlaying)
-        if (context is Activity) {
-            applyPictureInPictureParams(context)
-        }
+        // Playback state is updated by the actual player callback via updateSession.
+        // Do not optimistically flip the PiP icon when no playback change occurred.
+        mainHandler.post { togglePlaybackCallback?.invoke() }
     }
 
     private fun applyPictureInPictureParams(activity: Activity) {
@@ -158,7 +155,7 @@ internal object PlayerPictureInPictureManager {
         val iconRes = if (isPlaying) R.drawable.ic_player_pause else R.drawable.ic_player_play
         val title = if (isPlaying) pipPauseLabel else pipPlayLabel
 
-        val toggleIntent = Intent(PIP_ACTION_TOGGLE_PLAY_PAUSE).setPackage(activity.packageName)
+        val toggleIntent = Intent(activity, PipRemoteActionReceiver::class.java).setAction(PIP_ACTION_TOGGLE_PLAY_PAUSE)
         val flags = android.app.PendingIntent.FLAG_IMMUTABLE or android.app.PendingIntent.FLAG_UPDATE_CURRENT
         val pendingIntent = android.app.PendingIntent.getBroadcast(activity, REQUEST_CODE_TOGGLE, toggleIntent, flags)
         val icon = Icon.createWithResource(activity, iconRes)
