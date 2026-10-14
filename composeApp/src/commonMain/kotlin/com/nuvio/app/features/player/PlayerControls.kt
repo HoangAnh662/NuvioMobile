@@ -143,7 +143,7 @@ internal fun PlayerControlsShell(
                         ),
                     ),
             )
-    
+
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
