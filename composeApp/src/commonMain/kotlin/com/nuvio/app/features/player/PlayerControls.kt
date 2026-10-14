@@ -127,35 +127,38 @@ internal fun PlayerControlsShell(
             metrics.centerLift,
             timelineHeight * 2 + centerControlHeight + 16.dp - maxHeight,
         )
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(160.dp)
-                .align(Alignment.TopCenter)
-                .background(
-                    Brush.verticalGradient(
-                        colors = listOf(
-                            Color.Black.copy(alpha = 0.7f),
-                            Color.Transparent,
+        // Content warnings alone must not dim the playing video.
+        if (showPlaybackControls) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(160.dp)
+                    .align(Alignment.TopCenter)
+                    .background(
+                        Brush.verticalGradient(
+                            colors = listOf(
+                                Color.Black.copy(alpha = 0.7f),
+                                Color.Transparent,
+                            ),
                         ),
                     ),
-                ),
-        )
-
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(if (useLegacyLayout) 220.dp else 260.dp)
-                .align(Alignment.BottomCenter)
-                .background(
-                    Brush.verticalGradient(
-                        colors = listOf(
-                            Color.Transparent,
-                            Color.Black.copy(alpha = if (useLegacyLayout) 0.7f else 0.8f),
+            )
+    
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(if (useLegacyLayout) 220.dp else 260.dp)
+                    .align(Alignment.BottomCenter)
+                    .background(
+                        Brush.verticalGradient(
+                            colors = listOf(
+                                Color.Transparent,
+                                Color.Black.copy(alpha = if (useLegacyLayout) 0.7f else 0.8f),
+                            ),
                         ),
                     ),
-                ),
-        )
+            )
+        }
 
         Box(
             modifier = Modifier
