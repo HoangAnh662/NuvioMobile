@@ -80,7 +80,7 @@ internal fun PlayerSidePanel(
                 ),
         ) {
             val isStreamPanel = width == 520.dp
-            val resolvedWidth = minOf(maxWidth, if (isStreamPanel) 330.dp else width)
+            val resolvedWidth = minOf(maxWidth, if (isStreamPanel) 360.dp else width)
             val shape = RoundedCornerShape(topStart = 22.dp, bottomStart = 22.dp)
 
             AnimatedVisibility(
