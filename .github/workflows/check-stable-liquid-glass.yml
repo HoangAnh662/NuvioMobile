@@ -35,6 +35,11 @@ jobs:
           git rev-parse FETCH_HEAD
           git log -1 --oneline FETCH_HEAD
 
+      - name: Configure Git identity
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
       - name: Dry-run merge and report conflicts
         id: merge
         shell: bash
