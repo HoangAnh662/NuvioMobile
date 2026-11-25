@@ -4,6 +4,7 @@ on:
     branches:
       - test/preload-058-selective
       - fix/pip-pause-remote-action
+      - buff-stable-1.0.0-integration-work
   workflow_dispatch:
 permissions:
   contents: read
