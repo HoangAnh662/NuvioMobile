@@ -4,6 +4,7 @@ on:
     branches:
       - test/preload-058-selective
       - fix/pip-pause-remote-action
+      - feat/portrait-inline-player
   workflow_dispatch:
 permissions:
   contents: read
