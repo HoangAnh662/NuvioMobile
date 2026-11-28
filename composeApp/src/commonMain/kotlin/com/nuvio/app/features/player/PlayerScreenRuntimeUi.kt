@@ -113,8 +113,7 @@ internal fun PlayerScreenRuntime.RenderPlayerRuntimeUi(modifier: Modifier = Modi
     val playbackGesturesEnabled = initialLoadCompleted && errorMessage == null
 
     Box(
-        modifier = Modifier
-            modifier
+        modifier = modifier
             .fillMaxSize()
             .onSizeChanged { layoutSize = it }
             .playerSurfaceTapGestures(
