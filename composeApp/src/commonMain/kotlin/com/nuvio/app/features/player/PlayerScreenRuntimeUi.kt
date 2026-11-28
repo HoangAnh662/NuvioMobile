@@ -23,7 +23,7 @@ import kotlinx.coroutines.launch
 import nuvio.composeapp.generated.resources.*
 
 @Composable
-internal fun PlayerScreenRuntime.RenderPlayerRuntimeUi() {
+internal fun PlayerScreenRuntime.RenderPlayerRuntimeUi(modifier: Modifier = Modifier) {
     val runtime = this
     val isInPip = rememberIsInPictureInPicture()
     val displayedPositionMs = scrubbingPositionMs ?: playbackSnapshot.positionMs
@@ -114,6 +114,7 @@ internal fun PlayerScreenRuntime.RenderPlayerRuntimeUi() {
 
     Box(
         modifier = Modifier
+            modifier
             .fillMaxSize()
             .onSizeChanged { layoutSize = it }
             .playerSurfaceTapGestures(
