@@ -1,4 +1,5 @@
 name: Test Preload Android Build
+# Rebuild feature-branch player test APK after source fixes.
 on:
   push:
     branches:
