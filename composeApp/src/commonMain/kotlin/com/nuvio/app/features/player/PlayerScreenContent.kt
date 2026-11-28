@@ -2,6 +2,12 @@ package com.nuvio.app.features.player
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.runtime.Composable
@@ -10,6 +16,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.IntSize
@@ -150,6 +158,48 @@ internal fun PlayerScreenContent(args: PlayerScreenArgs) {
             ),
         )
         runtime.BindPlayerRuntimeEffects()
-        runtime.RenderPlayerRuntimeUi()
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState()),
+        ) {
+            runtime.RenderPlayerRuntimeUi(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(16f / 9f),
+            )
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 14.dp),
+            ) {
+                Text(
+                    text = runtime.activeEpisodeTitle?.takeIf { it.isNotBlank() } ?: args.title,
+                    style = MaterialTheme.typography.titleLarge,
+                    color = Color.White,
+                )
+                val episodeLine = listOfNotNull(
+                    runtime.activeSeasonNumber?.let { "S$it" },
+                    runtime.activeEpisodeNumber?.let { "E$it" },
+                    runtime.activeStreamTitle.takeIf { it.isNotBlank() },
+                ).joinToString(" · ")
+                if (episodeLine.isNotBlank()) {
+                    Text(
+                        text = episodeLine,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color.White.copy(alpha = 0.72f),
+                        modifier = Modifier.padding(top = 6.dp),
+                    )
+                }
+                runtime.activeStreamSubtitle?.takeIf { it.isNotBlank() }?.let { subtitle ->
+                    Text(
+                        text = subtitle,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color.White.copy(alpha = 0.78f),
+                        modifier = Modifier.padding(top = 8.dp),
+                    )
+                }
+            }
+        }
     }
 }
